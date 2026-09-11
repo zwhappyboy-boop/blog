@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://zhouyixuan.com/en/index.html</loc>
@@ -161,152 +161,152 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//pdf2word.html</loc>
+    <loc>https://zhouyixuan.com/pdf2word.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//docextract.html</loc>
+    <loc>https://zhouyixuan.com/docextract.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//jpg.html</loc>
+    <loc>https://zhouyixuan.com/jpg.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//png.html</loc>
+    <loc>https://zhouyixuan.com/png.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//webp.html</loc>
+    <loc>https://zhouyixuan.com/webp.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//compress.html</loc>
+    <loc>https://zhouyixuan.com/compress.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//resize.html</loc>
+    <loc>https://zhouyixuan.com/resize.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//rotate.html</loc>
+    <loc>https://zhouyixuan.com/rotate.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//heic.html</loc>
+    <loc>https://zhouyixuan.com/heic.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//ocr.html</loc>
+    <loc>https://zhouyixuan.com/ocr.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//imagepdf.html</loc>
+    <loc>https://zhouyixuan.com/imagepdf.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//pdfmerge.html</loc>
+    <loc>https://zhouyixuan.com/pdfmerge.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//pdfsplit.html</loc>
+    <loc>https://zhouyixuan.com/pdfsplit.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//pdfencrypt.html</loc>
+    <loc>https://zhouyixuan.com/pdfencrypt.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//pdfdecrypt.html</loc>
+    <loc>https://zhouyixuan.com/pdfdecrypt.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//pdfsign.html</loc>
+    <loc>https://zhouyixuan.com/pdfsign.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//word.html</loc>
+    <loc>https://zhouyixuan.com/word.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//markdown.html</loc>
+    <loc>https://zhouyixuan.com/markdown.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//json.html</loc>
+    <loc>https://zhouyixuan.com/json.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//base64.html</loc>
+    <loc>https://zhouyixuan.com/base64.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//url.html</loc>
+    <loc>https://zhouyixuan.com/url.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//uuid.html</loc>
+    <loc>https://zhouyixuan.com/uuid.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//qr.html</loc>
+    <loc>https://zhouyixuan.com/qr.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//timestamp.html</loc>
+    <loc>https://zhouyixuan.com/timestamp.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//unit.html</loc>
+    <loc>https://zhouyixuan.com/unit.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//color.html</loc>
+    <loc>https://zhouyixuan.com/color.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//calc.html</loc>
+    <loc>https://zhouyixuan.com/calc.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//csv2excel.html</loc>
+    <loc>https://zhouyixuan.com/csv2excel.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//batchrename.html</loc>
+    <loc>https://zhouyixuan.com/batchrename.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com//password.html</loc>
+    <loc>https://zhouyixuan.com/password.html</loc>
     <lastmod>2026-09-11</lastmod>
     <priority>0.8</priority>
   </url>
