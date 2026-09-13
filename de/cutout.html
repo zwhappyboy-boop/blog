@@ -1,0 +1,588 @@
+﻿<!doctype html><html lang="de"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Erkennt einfarbige und komplexe Hintergründe mit KI, 100% lokal · All-in-One Tools">
+<link rel="canonical" href="https://zhouyixuan.com/de/cutout.html">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8950518028405500" crossorigin="anonymous"></script>
+<title>AI Hintergrundentfernung - All-in-One Tools</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+/* ===== 抠图工具专用样式 ===== */
+#cutout-app{max-width:960px;margin:0 auto;padding:20px}
+.cu-zone{border:2px dashed #c5cdd9;border-radius:16px;padding:40px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:#fafbfd}
+.cu-zone:hover{border-color:#2563eb;background:#f0f5ff}
+.cu-zone.drag{border-color:#2563eb;background:#eef5ff}
+.cu-icon{font-size:48px;margin-bottom:8px}
+.cu-hint{color:#728095;font-size:14px;margin-top:6px}
+.cu-modes{display:flex;gap:10px;margin:16px 0;flex-wrap:wrap}
+.cu-mode{padding:10px 18px;border:1px solid #d7dee9;border-radius:10px;background:#fff;cursor:pointer;font-size:14px;font-weight:600;color:#33415e;transition:all .15s}
+.cu-mode:hover{border-color:#2563eb;color:#2563eb}
+.cu-mode.active{background:#2563eb;border-color:#2563eb;color:#fff}
+.cu-mode .badge{font-size:11px;font-weight:400;opacity:.7;margin-left:4px}
+.cu-opts{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin:12px 0;padding:12px;background:#f0f5ff;border:1px solid #d7dee9;border-radius:12px}
+.cu-opts label{font-size:13px;color:#42506b;font-weight:600;display:flex;align-items:center;gap:6px}
+.cu-opts input[type=range]{width:140px;accent-color:#2563eb}
+.cu-opts select{padding:6px 10px;border:1px solid #d7dee9;border-radius:8px;font-size:13px;background:#fff;color:#1c2b45}
+.cu-opts .val{font-size:12px;color:#728095;min-width:28px}
+.cu-pickbtn{padding:6px 12px;border:1px solid #2563eb;border-radius:8px;background:#fff;color:#2563eb;font-size:13px;cursor:pointer;font-weight:600}
+.cu-pickbtn.active{background:#2563eb;color:#fff}
+.cu-btns{display:flex;gap:10px;margin:16px 0}
+.cu-btn{padding:12px 24px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.cu-btn-primary{background:#2563eb;color:#fff}
+.cu-btn-primary:hover{opacity:.88}
+.cu-btn-primary:disabled{opacity:.4;cursor:not-allowed}
+.cu-btn-secondary{background:#e8edf5;color:#33415e}
+.cu-btn-secondary:hover{background:#dde5f0}
+.cu-btn-success{background:#16a34a;color:#fff}
+.cu-btn-success:hover{opacity:.88}
+.cu-canvas-wrap{position:relative;margin:16px 0;border:1px solid #e2e7ef;border-radius:12px;overflow:hidden;background:#f0f5ff}
+.cu-canvas-wrap canvas{display:block;max-width:100%;cursor:crosshair}
+.cu-canvas-wrap.pick-mode canvas{cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20'><circle cx='10' cy='10' r='8' fill='none' stroke='%232563eb' stroke-width='2'/><circle cx='10' cy='10' r='2' fill='%232563eb'/></svg>") 10 10,pointer}
+.cu-tools{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap;align-items:center}
+.cu-tool{padding:8px 14px;border:1px solid #d7dee9;border-radius:9px;background:#fff;cursor:pointer;font-size:13px;color:#33415e;font-weight:600;transition:all .15s}
+.cu-tool:hover{border-color:#2563eb;color:#2563eb}
+.cu-tool.active{background:#2563eb;border-color:#2563eb;color:#fff}
+.cu-tool-size{display:flex;align-items:center;gap:6px;font-size:13px;color:#728095}
+.cu-tool-size input{width:80px;accent-color:#2563eb}
+.cu-progress{margin:12px 0;padding:12px 16px;background:#f0f5ff;border-radius:10px;font-size:14px;color:#42506b;display:none}
+.cu-progress.show{display:block}
+.cu-progress .bar{height:6px;background:#d7dee9;border-radius:3px;margin-top:8px;overflow:hidden}
+.cu-progress .fill{height:100%;background:#2563eb;border-radius:3px;transition:width .3s}
+.cu-compare{display:flex;gap:12px;margin:12px 0;flex-wrap:wrap}
+.cu-compare .panel{flex:1;min-width:280px;border:1px solid #e2e7ef;border-radius:12px;overflow:hidden}
+.cu-compare .panel-title{padding:8px 12px;background:#f0f5ff;font-size:13px;font-weight:600;color:#42506b}
+.cu-compare .panel canvas{display:block;max-width:100%}
+.cu-info{padding:10px 14px;background:#f0f5ff;border:1px solid #d7dee9;border-radius:10px;font-size:13px;color:#42506b;margin:12px 0;line-height:1.7}
+.cu-info b{color:#2563eb}
+.cu-info .warn{color:#e88000}
+body.dark .cu-zone{background:#171d28;border-color:#303846}body.dark .cu-zone:hover{background:#1a2230;border-color:#3b82f6}body.dark .cu-opts{background:#171d28;border-color:#303846}body.dark .cu-opts label{color:#aebad0}body.dark .cu-opts select{background:#11151f;border-color:#303846;color:#dbe4f2}body.dark .cu-mode{background:#171d28;border-color:#303846;color:#c7d2e4}body.dark .cu-mode.active{background:#3b82f6;border-color:#3b82f6;color:#fff}body.dark .cu-tool{background:#171d28;border-color:#303846;color:#c7d2e4}body.dark .cu-tool.active{background:#3b82f6;border-color:#3b82f6;color:#fff}body.dark .cu-btn-secondary{background:#1a2230;color:#c7d2e4}body.dark .cu-canvas-wrap{background:#11151f;border-color:#303846}body.dark .cu-progress{background:#171d28;color:#aebad0}body.dark .cu-info{background:#171d28;border-color:#303846;color:#aebad0}body.dark .cu-compare .panel{border-color:#303846}body.dark .cu-compare .panel-title{background:#171d28;color:#aebad0}
+</style></head><body>
+<script>(function(s){s.dataset.zone='11774159',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+<header><b id="brand" onclick="location.href='../index.html'">🧰 <span data-t="brand">万能工具箱</span></b><nav id="navmenus"></nav><div class="navright"><label class="langlabel" for="lang" data-t="langLabel">语言选择</label>
+<select id="lang"><option value="zh-CN">中文</option><option value="en">English</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option></select><button id="theme">🌙</button></div></header>
+<section class="hero"><small data-t="eyebrow">免费 · 快速 · 隐私优先</small><h1 data-t="cutoutTitle">AI 智能抠图</h1><p data-t="cutoutDesc">自动识别纯色背景（色键秒抠）与复杂背景（AI模型抠图），全本地处理，图片不上传</p></section>
+<div class="ad">Advertisement</div>
+<div id="cutout-app">
+  <!-- 上传区 -->
+  <div class="cu-zone" id="dropZone">
+    <div class="cu-icon">✂️</div>
+    <div data-t="cuDrop">拖入图片或点击选择（支持 JPG / PNG / WebP / BMP）</div>
+    <div class="cu-hint" data-t="cuPrivacy">图片不会上传服务器，全部在浏览器本地处理</div>
+    <input id="fileInput" type="file" accept="image/*" hidden>
+  </div>
+
+  <!-- 模式切换 -->
+  <div class="cu-modes" id="modeBtns">
+    <button class="cu-mode active" data-mode="auto" data-t="cuModeAuto">自动识别<span class="badge" data-t="cuBadgeAuto">推荐</span></button>
+    <button class="cu-mode" data-mode="colorkey" data-t="cuModeKey">色键抠图<span class="badge" data-t="cuBadgeKey">绿幕/纯色</span></button>
+    <button class="cu-mode" data-mode="ai" data-t="cuModeAI">AI 抠图<span class="badge" data-t="cuBadgeAI">复杂背景</span></button>
+  </div>
+
+  <!-- 色键参数（仅色键模式显示） -->
+  <div class="cu-opts" id="keyOpts" style="display:none">
+    <button class="cu-pickbtn" id="pickBtn" data-t="cuPickColor">点击取色</button>
+    <label data-t="cuBgColor">背景色</label>
+    <input type="color" id="bgColorPicker" value="#00ff00">
+    <label data-t="cuTolerance">容差</label>
+    <input type="range" id="tolerance" min="10" max="120" value="35">
+    <span class="val" id="tolVal">35</span>
+    <label data-t="cuSpill">去绿溢</label>
+    <input type="range" id="spill" min="0" max="100" value="60">
+    <span class="val" id="spillVal">60</span>
+    <label data-t="cuFeather">羽化</label>
+    <input type="range" id="feather" min="0" max="10" value="2">
+    <span class="val" id="featherVal">2</span>
+  </div>
+
+  <!-- 操作按钮 -->
+  <div class="cu-btns">
+    <button class="cu-btn cu-btn-primary" id="runBtn" data-t="cuRun" disabled>开始抠图</button>
+    <button class="cu-btn cu-btn-secondary" id="resetBtn" data-t="cuReset" style="display:none">重新选择</button>
+    <button class="cu-btn cu-btn-success" id="downloadBtn" data-t="cuDownload" style="display:none">下载透明 PNG</button>
+  </div>
+
+  <!-- 进度提示 -->
+  <div class="cu-progress" id="progress">
+    <span id="progressText"></span>
+    <div class="bar"><div class="fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+
+  <!-- 画布预览 -->
+  <div class="cu-canvas-wrap" id="canvasWrap" style="display:none">
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <!-- 微调工具 -->
+  <div class="cu-tools" id="editTools" style="display:none">
+    <button class="cu-tool active" data-tool="erase" data-t="cuErase">擦除多余</button>
+    <button class="cu-tool" data-tool="restore" data-t="cuRestore">恢复遗漏</button>
+    <span class="cu-tool-size">
+      <span data-t="cuBrushSize">笔刷大小</span>
+      <input type="range" id="brushSize" min="5" max="80" value="25">
+      <span class="val" id="brushVal">25</span>
+    </span>
+  </div>
+
+  <!-- 对比预览 -->
+  <div class="cu-compare" id="compareArea" style="display:none">
+    <div class="panel">
+      <div class="panel-title" data-t="cuOriginal">原图</div>
+      <canvas id="origCanvas"></canvas>
+    </div>
+    <div class="panel">
+      <div class="panel-title" data-t="cuResult">抠图结果</div>
+      <canvas id="resultCanvas"></canvas>
+    </div>
+  </div>
+
+  <!-- 说明 -->
+  <div class="cu-info" id="infoBox">
+    <b data-t="cuHowToUse">使用说明</b><br>
+    <span data-t="cuTip1">• 自动模式：根据背景复杂度自动选择色键或 AI 方案</span><br>
+    <span data-t="cuTip2">• 色键模式：适合绿幕、蓝幕、纯色背景，秒级完成</span><br>
+    <span data-t="cuTip3">• AI 模式：适合复杂背景（风景、室内等），首次加载约 80MB 模型</span><br>
+    <span data-t="cuTip4">• 抠图后可用擦除/恢复笔刷微调边缘</span><br>
+    <span data-t="cuTip5" class="warn">• AI 模式首次使用需下载模型，之后浏览器自动缓存</span>
+  </div>
+</div>
+<footer>© 2026 All-in-One Online Tools · <a href="#" data-page="privacy" data-t="privacy">隐私政策</a> · <a href="#" data-page="terms" data-t="terms">服务条款</a> · <a href="#" data-page="contact" data-t="contact">联系我们</a></footer>
+<div id="modal" class="modal"><div class="box"><button id="close">×</button><h2 id="mt"></h2><p id="md"></p><div id="mb"></div></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+<script>if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js"</script>
+<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+<script>window.pagelang="de";window.autoTool="cutout"</script>
+<script src="../script.js"></script>
+<script>
+"use strict";
+/* ===== 抠图工具国际化 ===== */
+const CU_T={
+"zh-CN":{cutoutTitle:"AI 智能抠图",cutoutDesc:"自动识别纯色背景（色键秒抠）与复杂背景（AI模型抠图），全本地处理，图片不上传",cuDrop:"拖入图片或点击选择（支持 JPG / PNG / WebP / BMP）",cuPrivacy:"图片不会上传服务器，全部在浏览器本地处理",cuModeAuto:"自动识别",cuBadgeAuto:"推荐",cuModeKey:"色键抠图",cuBadgeKey:"绿幕/纯色",cuModeAI:"AI 抠图",cuBadgeAI:"复杂背景",cuPickColor:"点击取色",cuBgColor:"背景色",cuTolerance:"容差",cuSpill:"去绿溢",cuFeather:"羽化",cuRun:"开始抠图",cuReset:"重新选择",cuDownload:"下载透明 PNG",cuOriginal:"原图",cuResult:"抠图结果",cuErase:"擦除多余",cuRestore:"恢复遗漏",cuBrushSize:"笔刷大小",cuHowToUse:"使用说明",cuTip1:"• 自动模式：根据背景复杂度自动选择色键或 AI 方案",cuTip2:"• 色键模式：适合绿幕、蓝幕、纯色背景，秒级完成",cuTip3:"• AI 模式：适合复杂背景（风景、室内等），首次加载约 80MB 模型",cuTip4:"• 抠图后可用擦除/恢复笔刷微调边缘",cuTip5:"• AI 模式首次使用需下载模型，之后浏览器自动缓存",cuAutoDetected:"检测到纯色背景，使用色键抠图",cuAutoComplex:"检测到复杂背景，使用 AI 抠图",cuProcessing:"正在处理…",cuAILoading:"正在加载 AI 模型（首次约 80MB，请稍候）…",cuDone:"抠图完成",cuDownloadDone:"已下载",cuPickHint:"点击图片上要去除的背景颜色",cuNoFile:"请先选择图片"},
+en:{cutoutTitle:"AI Background Remover",cutoutDesc:"Auto-detects solid backgrounds (color keying) and complex backgrounds (AI model), 100% local processing",cuDrop:"Drop an image or click to select (JPG / PNG / WebP / BMP)",cuPrivacy:"Images never leave your browser — all processing is local",cuModeAuto:"Auto Detect",cuBadgeAuto:"Recommended",cuModeKey:"Color Key",cuBadgeKey:"Green screen",cuModeAI:"AI Model",cuBadgeAI:"Complex bg",cuPickColor:"Pick Color",cuBgColor:"BG Color",cuTolerance:"Tolerance",cuSpill:"Spill Fix",cuFeather:"Feather",cuRun:"Remove Background",cuReset:"Reset",cuDownload:"Download PNG",cuOriginal:"Original",cuResult:"Result",cuErase:"Erase",cuRestore:"Restore",cuBrushSize:"Brush Size",cuHowToUse:"How to Use",cuTip1:"• Auto mode: chooses color keying or AI based on background complexity",cuTip2:"• Color Key: best for green/blue screen or solid color backgrounds",cuTip3:"• AI Mode: best for complex backgrounds (landscapes, interiors, etc.)",cuTip4:"• Use Erase/Restore brushes to fine-tune edges after cutout",cuTip5:"• AI mode downloads ~80MB model on first use, then cached by browser",cuAutoDetected:"Solid background detected — using color keying",cuAutoComplex:"Complex background detected — using AI model",cuProcessing:"Processing…",cuAILoading:"Loading AI model (~80MB first time, please wait)…",cuDone:"Done",cuDownloadDone:"Downloaded",cuPickHint:"Click on the background color to remove",cuNoFile:"Please select an image first"},
+ja:{cutoutTitle:"AI背景除去",cutoutDesc:"純色背景（カラーキー）と複雑背景（AIモデル）を自動判定、すべてローカル処理",cuDrop:"画像をドロップまたはクリックして選択（JPG / PNG / WebP / BMP）",cuPrivacy:"画像はサーバーに送信されず、ブラウザ内で処理されます",cuModeAuto:"自動判定",cuBadgeAuto:"推奨",cuModeKey:"カラーキー",cuBadgeKey:"グリーンスクリーン",cuModeAI:"AIモデル",cuBadgeAI:"複雑背景",cuPickColor:"色を取得",cuBgColor:"背景色",cuTolerance:"許容範囲",cuSpill:"色漏れ補正",cuFeather:"フェザー",cuRun:"背景を除去",cuReset:"リセット",cuDownload:"PNGをダウンロード",cuOriginal:"元画像",cuResult:"結果",cuErase:"消去",cuRestore:"復元",cuBrushSize:"ブラシサイズ",cuHowToUse:"使い方",cuTip1:"• 自動モード：背景の複雑さに応じてカラーキーまたはAIを自動選択",cuTip2:"• カラーキー：グリーンスクリーンや単色背景に最適、瞬時に完了",cuTip3:"• AIモード：複雑な背景（風景、室内など）に最適、初回約80MB",cuTip4:"• 切り抜き後、消去/復元ブラシでエッジを微調整",cuTip5:"• AIモードは初回モデルダウンロード後、ブラウザにキャッシュされます",cuAutoDetected:"純色背景を検出 — カラーキーを使用",cuAutoComplex:"複雑背景を検出 — AIモデルを使用",cuProcessing:"処理中…",cuAILoading:"AIモデルを読み込み中（初回約80MB）…",cuDone:"完了",cuDownloadDone:"ダウンロード済み",cuPickHint:"除去したい背景色をクリック",cuNoFile:"画像を選択してください"},
+ko:{cutoutTitle:"AI 배경 제거",cutoutDesc:"단색 배경(컬러키)과 복잡한 배경(AI모델) 자동 감지, 로컬 처리",cuDrop:"이미지를 드롭하거나 클릭하여 선택 (JPG / PNG / WebP / BMP)",cuPrivacy:"이미지는 서버에 업로드되지 않고 브라우저에서 처리됩니다",cuModeAuto:"자동 감지",cuBadgeAuto:"권장",cuModeKey:"컬러키",cuBadgeKey:"그린스크린",cuModeAI:"AI모델",cuBadgeAI:"복잡한 배경",cuPickColor:"색상 선택",cuBgColor:"배경색",cuTolerance:"허용오차",cuSpill:"스필 보정",cuFeather:"페더",cuRun:"배경 제거",cuReset:"재설정",cuDownload:"PNG 다운로드",cuOriginal:"원본",cuResult:"결과",cuErase:"지우기",cuRestore:"복원",cuBrushSize:"브러시 크기",cuHowToUse:"사용 방법",cuTip1:"• 자동 모드: 배경 복잡도에 따라 컬러키 또는 AI 자동 선택",cuTip2:"• 컬러키: 그린스크린/단색 배경에 적합, 즉시 완료",cuTip3:"• AI 모드: 복잡한 배경(풍경, 실내 등)에 적합, 첫 로드 약 80MB",cuTip4:"• 잘라내기 후 지우기/복원 브러시로 가장자리 미세 조정",cuTip5:"• AI 모드 첫 사용 시 모델 다운로드 후 브라우저에 캐시됨",cuAutoDetected:"단색 배경 감지 — 컬러키 사용",cuAutoComplex:"복잡한 배경 감지 — AI모델 사용",cuProcessing:"처리 중…",cuAILoading:"AI 모델 로드 중 (첫 회 약 80MB)…",cuDone:"완료",cuDownloadDone:"다운로드 완료",cuPickHint:"제거할 배경색 클릭",cuNoFile:"이미지를 먼저 선택하세요"},
+es:{cutoutTitle:"Eliminador de fondo IA",cutoutDesc:"Detecta fondos de color sólido (clave de color) y fondos complejos (IA), 100% local",cuDrop:"Suelta una imagen o haz clic para seleccionar (JPG / PNG / WebP / BMP)",cuPrivacy:"Las imágenes no salen del navegador, todo se procesa localmente",cuModeAuto:"Auto Detectar",cuBadgeAuto:"Recomendado",cuModeKey:"Clave de Color",cuBadgeKey:"Fondo sólido",cuModeAI:"IA",cuBadgeAI:"Fondo complejo",cuPickColor:"Elegir Color",cuBgColor:"Color de fondo",cuTolerance:"Tolerancia",cuSpill:"Corregir halo",cuFeather:"Difuminar",cuRun:"Quitar fondo",cuReset:"Reiniciar",cuDownload:"Descargar PNG",cuOriginal:"Original",cuResult:"Resultado",cuErase:"Borrar",cuRestore:"Restaurar",cuBrushSize:"Tamaño del pincel",cuHowToUse:"Cómo usar",cuTip1:"• Modo auto: elige clave de color o IA según el fondo",cuTip2:"• Clave de color: ideal para fondos de color sólido o verde/azul",cuTip3:"• Modo IA: ideal para fondos complejos (paisajes, interiores)",cuTip4:"• Usa pinceles de borrar/restaurar para ajustar los bordes",cuTip5:"• El modo IA descarga ~80MB la primera vez, luego se cachea",cuAutoDetected:"Fondo de color sólido detectado — usando clave de color",cuAutoComplex:"Fondo complejo detectado — usando IA",cuProcessing:"Procesando…",cuAILoading:"Cargando modelo de IA (~80MB la primera vez)…",cuDone:"Hecho",cuDownloadDone:"Descargado",cuPickHint:"Haz clic en el color de fondo a eliminar",cuNoFile:"Selecciona una imagen primero"},
+fr:{cutoutTitle:"Suppression de fond IA",cutoutDesc:"Détecte les fonds de couleur unie (clé de couleur) et complexes (IA), 100% local",cuDrop:"Déposez une image ou cliquez pour sélectionner (JPG / PNG / WebP / BMP)",cuPrivacy:"Les images ne quittent pas votre navigateur — tout est traité localement",cuModeAuto:"Auto",cuBadgeAuto:"Recommandé",cuModeKey:"Clé de couleur",cuBadgeKey:"Fond uni",cuModeAI:"IA",cuBadgeAI:"Fond complexe",cuPickColor:"Choisir couleur",cuBgColor:"Couleur de fond",cuTolerance:"Tolérance",cuSpill:"Correction halo",cuFeather:"Adoucir",cuRun:"Supprimer le fond",cuReset:"Réinitialiser",cuDownload:"Télécharger PNG",cuOriginal:"Original",cuResult:"Résultat",cuErase:"Effacer",cuRestore:"Restaurer",cuBrushSize:"Taille du pinceau",cuHowToUse:"Mode d'emploi",cuTip1:"• Mode auto : choisit clé de couleur ou IA selon le fond",cuTip2:"• Clé de couleur : idéal pour fonds verts/bleus ou couleur unie",cuTip3:"• Mode IA : idéal pour fonds complexes (paysages, intérieurs)",cuTip4:"• Utilisez les pinceaux effacer/restaurer pour affiner les bords",cuTip5:"• Le mode IA télécharge ~80MB la première fois, puis cache",cuAutoDetected:"Fond uni détecté — clé de couleur",cuAutoComplex:"Fond complexe détecté — IA",cuProcessing:"Traitement…",cuAILoading:"Chargement du modèle IA (~80MB la première fois)…",cuDone:"Terminé",cuDownloadDone:"Téléchargé",cuPickHint:"Cliquez sur la couleur de fond à supprimer",cuNoFile:"Veuillez d'abord sélectionner une image"},
+de:{cutoutTitle:"AI Hintergrundentfernung",cutoutDesc:"Erkennt einfarbige Hintergründe (Color Keying) und komplexe Hintergründe (KI), 100% lokal",cuDrop:"Bild ablegen oder klicken zum Auswählen (JPG / PNG / WebP / BMP)",cuPrivacy:"Bilder verlassen nicht Ihren Browser — alles wird lokal verarbeitet",cuModeAuto:"Auto",cuBadgeAuto:"Empfohlen",cuModeKey:"Color Key",cuBadgeKey:"Einfarbig",cuModeAI:"KI-Modell",cuBadgeAI:"Komplexer Hintergrund",cuPickColor:"Farbe wählen",cuBgColor:"Hintergrundfarbe",cuTolerance:"Toleranz",cuSpill:"Farbkorrektur",cuFeather:"Weichzeichnen",cuRun:"Hintergrund entfernen",cuReset:"Zurücksetzen",cuDownload:"PNG herunterladen",cuOriginal:"Original",cuResult:"Ergebnis",cuErase:"Löschen",cuRestore:"Wiederherstellen",cuBrushSize:"Pinselgröße",cuHowToUse:"Anleitung",cuTip1:"• Auto-Modus: wählt Color Keying oder KI je nach Hintergrund",cuTip2:"• Color Key: ideal für einfarbige oder Grün-/Blau-Hintergründe",cuTip3:"• KI-Modus: ideal für komplexe Hintergründe (Landschaften, Innenräume)",cuTip4:"• Verwenden Sie Lösch-/Wiederherstellungs-Pinsel zum Feintuning",cuTip5:"• KI-Modul lädt ~80MB beim ersten Mal, dann gecacht",cuAutoDetected:"Einfarbiger Hintergrund erkannt — Color Keying",cuAutoComplex:"Komplexer Hintergrund erkannt — KI",cuProcessing:"Verarbeitung…",cuAILoading:"KI-Modell wird geladen (~80MB erstmalig)…",cuDone:"Fertig",cuDownloadDone:"Heruntergeladen",cuPickHint:"Klicken Sie auf die zu entfernende Hintergrundfarbe",cuNoFile:"Bitte zuerst ein Bild auswählen"},
+pt:{cutoutTitle:"Removedor de fundo IA",cutoutDesc:"Detecta fundos de cor sólida (chave de cor) e fundos complexos (IA), 100% local",cuDrop:"Solte uma imagem ou clique para selecionar (JPG / PNG / WebP / BMP)",cuPrivacy:"As imagens não saem do navegador — tudo é processado localmente",cuModeAuto:"Auto",cuBadgeAuto:"Recomendado",cuModeKey:"Chave de Cor",cuBadgeKey:"Cor sólida",cuModeAI:"IA",cuBadgeAI:"Fundo complexo",cuPickColor:"Escolher Cor",cuBgColor:"Cor de fundo",cuTolerance:"Tolerância",cuSpill:"Correção de halo",cuFeather:"Suavizar",cuRun:"Remover fundo",cuReset:"Redefinir",cuDownload:"Baixar PNG",cuOriginal:"Original",cuResult:"Resultado",cuErase:"Apagar",cuRestore:"Restaurar",cuBrushSize:"Tamanho do pincel",cuHowToUse:"Como usar",cuTip1:"• Modo auto: escolhe chave de cor ou IA conforme o fundo",cuTip2:"• Chave de cor: ideal para fundos de cor sólida ou verde/azul",cuTip3:"• Modo IA: ideal para fundos complexos (paisagens, interiores)",cuTip4:"• Use pincéis de apagar/restaurar para ajustar bordas",cuTip5:"• O modo IA baixa ~80MB na primeira vez, depois cacheado",cuAutoDetected:"Fundo de cor sólida detectado — chave de cor",cuAutoComplex:"Fundo complexo detectado — IA",cuProcessing:"Processando…",cuAILoading:"Carregando modelo de IA (~80MB na primeira vez)…",cuDone:"Concluído",cuDownloadDone:"Baixado",cuPickHint:"Clique na cor de fundo a remover",cuNoFile:"Selecione uma imagem primeiro"}
+};
+
+/* ===== 状态 ===== */
+let cuLang=window.pageLang||"zh-CN";
+if(!CU_T[cuLang])cuLang="en";
+const ct=(k)=>(CU_T[cuLang]&&CU_T[cuLang][k])||(CU_T.en[k])||k;
+let origImageData=null;   // 原始 ImageData（不可变）
+let workImageData=null;   // 工作用 ImageData（含 alpha）
+let currentMode="auto";
+let pickMode=false;
+let activeTool="erase";
+let isDrawing=false;
+let aiModule=null;
+
+/* ===== DOM ===== */
+const $=(s)=>document.querySelector(s);
+const dropZone=$("#dropZone");
+const fileInput=$("#fileInput");
+const canvas=$("#canvas");
+const ctx=canvas.getContext("2d",{willReadFrequently:true});
+const canvasWrap=$("#canvasWrap");
+const keyOpts=$("#keyOpts");
+const runBtn=$("#runBtn");
+const resetBtn=$("#resetBtn");
+const downloadBtn=$("#downloadBtn");
+const progress=$("#progress");
+const progressText=$("#progressText");
+const progressFill=$("#progressFill");
+const editTools=$("#editTools");
+const compareArea=$("#compareArea");
+
+/* ===== 应用国际化 ===== */
+function applyCuLang(){
+  document.querySelectorAll("[data-t]").forEach(e=>{
+    const k=e.dataset.t;
+    if(CU_T[cuLang]&&CU_T[cuLang][k])e.textContent=CU_T[cuLang][k];
+  });
+}
+
+/* ===== 上传处理 ===== */
+dropZone.addEventListener("click",()=>{if(!pickMode)fileInput.click()});
+dropZone.addEventListener("dragover",e=>{e.preventDefault();dropZone.classList.add("drag")});
+dropZone.addEventListener("dragleave",()=>dropZone.classList.remove("drag"));
+dropZone.addEventListener("drop",e=>{e.preventDefault();dropZone.classList.remove("drag");if(e.dataTransfer.files[0])loadImage(e.dataTransfer.files[0])});
+fileInput.addEventListener("change",()=>{if(fileInput.files[0])loadImage(fileInput.files[0])});
+
+function loadImage(file){
+  if(!file.type.startsWith("image/"))return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const img=new Image();
+    img.onload=()=>{
+      // 限制最大尺寸，避免卡顿
+      let{width:w,height:h}=img;
+      const maxDim=1600;
+      if(Math.max(w,h)>maxDim){const s=maxDim/Math.max(w,h);w=Math.round(w*s);h=Math.round(h*s)}
+      canvas.width=w;canvas.height=h;
+      ctx.drawImage(img,0,0,w,h);
+      origImageData=ctx.getImageData(0,0,w,h);
+      workImageData=null;
+      canvasWrap.style.display="";
+      runBtn.disabled=false;
+      resetBtn.style.display="";
+      downloadBtn.style.display="none";
+      editTools.style.display="none";
+      compareArea.style.display="none";
+      progress.classList.remove("show");
+      // 自动检测背景
+      if(currentMode==="auto")autoDetect();
+    };
+    img.src=ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ===== 背景自动检测：采样四角像素方差 ===== */
+function isSolidBackground(id){
+  const d=id.data,w=id.width,h=id.height;
+  const pad=Math.max(4,Math.round(Math.min(w,h)*0.03));
+  const samples=[];
+  const corners=[[0,0],[w-pad,0],[0,h-pad],[w-pad,h-pad]];
+  for(const[cx,cy]of corners){
+    for(let y=cy;y<cy+pad;y++)for(let x=cx;x<cx+pad;x++){
+      const i=(y*w+x)*4;
+      samples.push([d[i],d[i+1],d[i+2]]);
+    }
+  }
+  // 计算方差
+  let mean=[0,0,0];for(const s of samples){mean[0]+=s[0];mean[1]+=s[1];mean[2]+=s[2]}
+  mean=mean.map(v=>v/samples.length);
+  let varSum=0;for(const s of samples)varSum+=(s[0]-mean[0])**2+(s[1]-mean[1])**2+(s[2]-mean[2])**2;
+  const variance=varSum/samples.length;
+  return{solid:variance<600,bgColor:mean};
+}
+
+function autoDetect(){
+  if(!origImageData)return;
+  const{solid,bgColor}=isSolidBackground(origImageData);
+  if(solid){
+    // 设置色键参数
+    const hex="#"+[bgColor[0],bgColor[1],bgColor[2]].map(v=>Math.round(v).toString(16).padStart(2,"0")).join("");
+    $("#bgColorPicker").value=hex;
+    showProgress(ct("cuAutoDetected"),0);
+    setTimeout(()=>hideProgress(),1500);
+  }else{
+    showProgress(ct("cuAutoComplex"),0);
+    setTimeout(()=>hideProgress(),1500);
+  }
+}
+
+/* ===== 模式切换 ===== */
+$("#modeBtns").addEventListener("click",e=>{
+  const btn=e.target.closest(".cu-mode");if(!btn)return;
+  document.querySelectorAll(".cu-mode").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  currentMode=btn.dataset.mode;
+  keyOpts.style.display=(currentMode==="colorkey")?"":"none";
+  if(currentMode==="auto"&&origImageData)autoDetect();
+});
+
+/* ===== 参数滑块同步 ===== */
+["tolerance","spill","feather","brushSize"].forEach(id=>{
+  const el=$("#"+id);if(!el)return;
+  el.addEventListener("input",()=>{
+    const vId=id+"Val";
+    const vEl=$("#"+vId);if(vEl)vEl.textContent=el.value;
+  });
+});
+
+/* ===== 取色器 ===== */
+$("#pickBtn").addEventListener("click",()=>{
+  pickMode=!pickMode;
+  $("#pickBtn").classList.toggle("active",pickMode);
+  canvasWrap.classList.toggle("pick-mode",pickMode);
+  if(pickMode)showProgress(ct("cuPickHint"),0);
+  else hideProgress();
+});
+
+canvas.addEventListener("click",e=>{
+  if(!pickMode||!origImageData)return;
+  const rect=canvas.getBoundingClientRect();
+  const sx=canvas.width/rect.width,sy=canvas.height/rect.height;
+  const x=Math.round((e.clientX-rect.left)*sx);
+  const y=Math.round((e.clientY-rect.top)*sy);
+  const idx=(y*canvas.width+x)*4;
+  const d=origImageData.data;
+  const hex="#"+[d[idx],d[idx+1],d[idx+2]].map(v=>v.toString(16).padStart(2,"0")).join("");
+  $("#bgColorPicker").value=hex;
+  pickMode=false;
+  $("#pickBtn").classList.remove("active");
+  canvasWrap.classList.remove("pick-mode");
+  hideProgress();
+});
+
+/* ===== 进度控制 ===== */
+function showProgress(text,percent){
+  progressText.textContent=text;
+  progressFill.style.width=Math.round(percent)+"%";
+  progress.classList.add("show");
+}
+function hideProgress(){progress.classList.remove("show")}
+
+/* ===== 执行抠图 ===== */
+runBtn.addEventListener("click",async()=>{
+  if(!origImageData)return alert(ct("cuNoFile"));
+  let mode=currentMode;
+  if(mode==="auto"){
+    const{solid}=isSolidBackground(origImageData);
+    mode=solid?"colorkey":"ai";
+  }
+  if(mode==="colorkey")runColorKey();
+  else if(mode==="ai")await runAI();
+});
+
+/* ===== 色键算法 ===== */
+function runColorKey(){
+  showProgress(ct("cuProcessing"),30);
+  const d=origImageData.data;
+  const w=origImageData.width,h=origImageData.height;
+  const bgHex=$("#bgColorPicker").value;
+  const br=parseInt(bgHex.slice(1,3),16),bg=parseInt(bgHex.slice(3,5),16),bb=parseInt(bgHex.slice(5,7),16);
+  const tol=parseInt($("#tolerance").value);
+  const spillAmt=parseInt($("#spill").value)/100;
+  const feather=parseInt($("#feather").value);
+  const lowT=tol*0.6,highT=tol*1.8;
+
+  const out=new ImageData(w,h);
+  const od=out.data;
+
+  for(let i=0;i<d.length;i+=4){
+    const r=d[i],g=d[i+1],b=d[i+2];
+    const dist=Math.sqrt((r-br)**2+(g-bg)**2+(b-bb)**2);
+    // alpha based on distance
+    let alpha=255;
+    if(dist<lowT)alpha=0;
+    else if(dist<highT)alpha=Math.round((dist-lowT)/(highT-lowT)*255);
+    // green dominance penalty
+    const gd=g-Math.max(r,b);
+    if(gd>10&&dist<highT*1.5){
+      const penalty=Math.min(1,(gd-10)/30);
+      alpha=Math.round(alpha*(1-penalty));
+    }
+    // spill suppression
+    let nr=r,ng=g,nb=b;
+    if(alpha>0&&alpha<255){
+      const excess=Math.max(g-(r+b)/2,0);
+      ng=g-Math.round(excess*spillAmt);
+      ng=Math.min(ng,Math.round((r+b)/2)+15);
+      ng=Math.max(ng,0);
+    }
+    od[i]=nr;od[i+1]=ng;od[i+2]=nb;od[i+3]=alpha;
+  }
+
+  // feather (3x3 box blur on alpha channel)
+  if(feather>0){
+    const tmp=new Uint8ClampedArray(od);
+    const f=Math.min(feather,5);
+    for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+      let sum=0,cnt=0;
+      for(let dy=-f;dy<=f;dy+=Math.max(1,f))for(let dx=-f;dx<=f;dx+=Math.max(1,f)){
+        const nx=x+dx,ny=y+dy;
+        if(nx>=0&&nx<w&&ny>=0&&ny<h){sum+=tmp[(ny*w+nx)*4+3];cnt++}
+      }
+      od[(y*w+x)*4+3]=Math.round(sum/cnt);
+    }
+  }
+  // fill holes: simple dilation pass to remove small transparent specks inside subject
+  const aCh=new Uint8ClampedArray(w*h);
+  for(let i=0;i<w*h;i++)aCh[i]=od[i*4+3]>40?255:0;
+  const dilated=dilateAlpha(aCh,w,h,2);
+  const eroded=erodeAlpha(dilated,w,h,2);
+  for(let i=0;i<w*h;i++){
+    if(aCh[i]===0&&eroded[i]===255)od[i*4+3]=200; // fill hole
+  }
+
+  workImageData=out;
+  ctx.putImageData(workImageData,0,0);
+  showProgress(ct("cuDone"),100);
+  onCutoutDone();
+}
+
+function dilateAlpha(m,w,h,it){
+  let cur=m;
+  for(let k=0;k<it;k++){
+    const tmp=new Uint8ClampedArray(w*h);
+    for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+      let max=0;
+      for(const[dx,dy]of[[0,0],[-1,0],[1,0],[0,-1],[0,1]]){const nx=x+dx,ny=y+dy;if(nx>=0&&nx<w&&ny>=0&&ny<h)max=Math.max(max,cur[ny*w+nx])}
+      tmp[y*w+x]=max;
+    }
+    cur=tmp;
+  }
+  return cur;
+}
+function erodeAlpha(m,w,h,it){
+  let cur=m;
+  for(let k=0;k<it;k++){
+    const tmp=new Uint8ClampedArray(w*h);
+    for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+      let min=255;
+      for(const[dx,dy]of[[0,0],[-1,0],[1,0],[0,-1],[0,1]]){const nx=x+dx,ny=y+dy;if(nx>=0&&nx<w&&ny>=0&&ny<h)min=Math.min(min,cur[ny*w+nx])}
+      tmp[y*w+x]=min;
+    }
+    cur=tmp;
+  }
+  return cur;
+}
+
+/* ===== AI 抠图（@imgly/background-removal） ===== */
+async function runAI(){
+  try{
+    showProgress(ct("cuAILoading"),5);
+    if(!aiModule){
+      aiModule=await import("https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.0/+esm");
+    }
+    showProgress(ct("cuProcessing"),30);
+    // 将 canvas 转为 Blob
+    const blob=await new Promise(res=>canvas.toBlob(res,"image/png"));
+    const result=await aiModule.removeBackground(blob,{
+      progress:(key,current,total)=>{
+        const pct=30+Math.round((current/total)*60);
+        showProgress(ct("cuProcessing")+" "+current+"/"+total,pct);
+      }
+    });
+    showProgress(ct("cuProcessing"),90);
+    // 将结果画到 canvas
+    const img=new Image();
+    img.onload=()=>{
+      const w=origImageData.width,h=origImageData.height;
+      canvas.width=w;canvas.height=h;
+      ctx.clearRect(0,0,w,h);
+      ctx.drawImage(img,0,0,w,h);
+      workImageData=ctx.getImageData(0,0,w,h);
+      showProgress(ct("cuDone"),100);
+      onCutoutDone();
+    };
+    img.src=URL.createObjectURL(result);
+  }catch(err){
+    showProgress("AI Error: "+err.message,0);
+    setTimeout(hideProgress,3000);
+  }
+}
+
+/* ===== 抠图完成：显示工具和对比 ===== */
+function onCutoutDone(){
+  editTools.style.display="";
+  downloadBtn.style.display="";
+  compareArea.style.display="";
+  // 对比预览
+  const oc=$("#origCanvas"),rc=$("#resultCanvas");
+  const w=origImageData.width,h=origImageData.height;
+  const scale=Math.min(1,400/Math.max(w,h));
+  oc.width=w*scale;oc.height=h*scale;
+  rc.width=w*scale;rc.height=h*scale;
+  const octx=oc.getContext("2d"),rctx=rc.getContext("2d");
+  // 原图
+  const tmpCanvas=document.createElement("canvas");
+  tmpCanvas.width=w;tmpCanvas.height=h;
+  tmpCanvas.getContext("2d").putImageData(origImageData,0,0);
+  octx.drawImage(tmpCanvas,0,0,oc.width,oc.height);
+  // 结果（棋盘格底）
+  drawCheckerboard(rctx,rc.width,rc.height);
+  const workCanvas=document.createElement("canvas");
+  workCanvas.width=w;workCanvas.height=h;
+  workCanvas.getContext("2d").putImageData(workImageData,0,0);
+  rctx.drawImage(workCanvas,0,0,rc.width,rc.height);
+  setTimeout(hideProgress,1000);
+}
+
+function drawCheckerboard(c,w,h){
+  const sz=12;c.fillStyle="#fff";c.fillRect(0,0,w,h);
+  c.fillStyle="#e8e8e8";
+  for(let y=0;y<h;y+=sz)for(let x=0;x<w;x+=sz)if((Math.floor(x/sz)+Math.floor(y/sz))%2)c.fillRect(x,y,sz,sz);
+}
+
+/* ===== 笔刷微调 ===== */
+editTools.addEventListener("click",e=>{
+  const t=e.target.closest(".cu-tool");if(!t)return;
+  document.querySelectorAll(".cu-tool").forEach(b=>b.classList.remove("active"));
+  t.classList.add("active");
+  activeTool=t.dataset.tool;
+});
+
+function getCanvasPos(e){
+  const rect=canvas.getBoundingClientRect();
+  const sx=canvas.width/rect.width,sy=canvas.height/rect.height;
+  return{x:Math.round((e.clientX-rect.left)*sx),y:Math.round((e.clientY-rect.top)*sy)};
+}
+
+canvas.addEventListener("mousedown",e=>{
+  if(pickMode||!workImageData)return;
+  isDrawing=true;brushStroke(e);
+});
+canvas.addEventListener("mousemove",e=>{if(isDrawing)brushStroke(e)});
+canvas.addEventListener("mouseup",()=>isDrawing=false);
+canvas.addEventListener("mouseleave",()=>isDrawing=false);
+
+function brushStroke(e){
+  if(!isDrawing||!workImageData)return;
+  const{x,y}=getCanvasPos(e);
+  const size=parseInt($("#brushSize").value);
+  const r=Math.max(1,size);
+  const w=workImageData.width,h=workImageData.height;
+  const d=workImageData.data;
+  const od=origImageData.data;
+  for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++){
+    if(dx*dx+dy*dy>r*r)continue;
+    const px=x+dx,py=y+dy;
+    if(px<0||px>=w||py<0||py>=h)continue;
+    const idx=(py*w+px)*4;
+    if(activeTool==="erase"){
+      d[idx+3]=0;
+    }else{
+      d[idx]=od[idx];d[idx+1]=od[idx+1];d[idx+2]=od[idx+2];d[idx+3]=255;
+    }
+  }
+  ctx.putImageData(workImageData,0,0);
+}
+
+/* ===== 下载 ===== */
+downloadBtn.addEventListener("click",()=>{
+  if(!workImageData)return;
+  const w=workImageData.width,h=workImageData.height;
+  const dlCanvas=document.createElement("canvas");
+  dlCanvas.width=w;dlCanvas.height=h;
+  dlCanvas.getContext("2d").putImageData(workImageData,0,0);
+  dlCanvas.toBlob(blob=>{
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download="cutout_"+Date.now()+".png";
+    a.click();
+    showProgress(ct("cuDownloadDone"),100);
+    setTimeout(hideProgress,1500);
+  },"image/png");
+});
+
+/* ===== 重置 ===== */
+resetBtn.addEventListener("click",()=>{
+  if(origImageData){
+    ctx.putImageData(origImageData,0,0);
+    workImageData=null;
+    downloadBtn.style.display="none";
+    editTools.style.display="none";
+    compareArea.style.display="none";
+  }
+});
+
+/* ===== 初始化 ===== */
+applyCuLang();
+// 语言切换同步
+const origLangChange=$("#lang").onchange;
+$("#lang").onchange=e=>{
+  cuLang=e.target.value;
+  if(!CU_T[cuLang])cuLang="en";
+  applyCuLang();
+};
+</script>
+</body></html>
