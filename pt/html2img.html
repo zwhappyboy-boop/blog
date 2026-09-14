@@ -1,4 +1,4 @@
-<!doctype html><html lang="pt"><head>
+﻿<!doctype html><html lang="pt"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Carregue HTML ou cole codigo, captura HD de pagina completa local, 2x/3x, sem upload - Caixa de Ferramentas">
 <link rel="canonical" href="https://zhouyixuan.com/pt/html2img.html">
@@ -8,7 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
 #hi-app{max-width:900px;margin:0 auto;padding:20px}
-.hi-zone{border:2px dashed #c5cdd9;border-radius:16px;padding:40px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:#fafbfd}
+.hi-zone{display:block;border:2px dashed #c5cdd9;border-radius:16px;padding:40px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:#fafbfd}
 .hi-zone:hover{border-color:#2563eb;background:#f0f5ff}
 .hi-zone.drag{border-color:#2563eb;background:#eef5ff}
 .hi-icon{font-size:48px;margin-bottom:8px}
@@ -57,13 +57,13 @@ body.dark .hi-zone{background:#171d28;border-color:#303846}body.dark .hi-zone:ho
     <button class="hi-tab" data-tab="paste" data-t="hiTabPaste">粘贴代码</button>
   </div>
   <div id="uploadPanel">
-    <div class="hi-zone" id="dropZone">
+    <label class="hi-zone" id="dropZone" for="fileInput">
       <div class="hi-icon">📄</div>
       <div data-t="hiDrop">拖入 HTML 文件或点击选择（.html / .htm）</div>
       <div class="hi-hint" data-t="hiPrivacy">文件不会上传服务器，全部在浏览器本地处理</div>
-      <input id="fileInput" type="file" accept=".html,.htm,text/html" hidden>
+      <input id="fileInput" type="file" accept=".html,.htm,text/html" style="display:none">
+    </label>
     </div>
-  </div>
   <div id="pastePanel" style="display:none">
     <textarea class="hi-textarea" id="codeInput" data-t="hiCodePh" placeholder="粘贴 HTML 代码到这里…"></textarea>
   </div>
