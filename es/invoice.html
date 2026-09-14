@@ -1,0 +1,171 @@
+<!doctype html><html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Extracción por lotes de facturas y exportación a Excel · Caja de herramientas">
+<link rel="canonical" href="https://zhouyixuan.com/es/invoice.html">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8950518028405500" crossorigin="anonymous"></script>
+<title>Estadísticas de Facturas - Caja de herramientas</title><link rel="stylesheet" href="../style.css"></head><body>
+<script>(function(s){s.dataset.zone='11774159',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+<header><b id="brand" onclick="location.href='../index.html'">🧰 <span data-t="brand">Caja de herramientas</span></b><nav id="navmenus"></nav><div class="navright"><label class="langlabel" for="lang" data-t="langLabel">Idioma</label>
+<select id="lang"><option value="zh-CN">中文</option><option value="en">English</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="es" selected>Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option></select><button id="theme">🌙</button></div></header>
+<section class="hero"><small data-t="eyebrow">Gratis · Rápido · Privacidad</small><h1>Estadísticas de Facturas</h1><p data-t="desc">Extracción por lotes de facturas y exportación a Excel</p>
+<input id="search" data-p="search" placeholder="搜索工具，例如：JPG、JSON、二维码…"></section>
+<div class="ad">Advertisement</div><main><section id="tools"><h2 data-t="all">Todas las herramientas</h2><div id="grid"></div></section></main>
+<footer>© 2026 All-in-One Online Tools · <a href="#" data-page="privacy" data-t="privacy">Política de Privacidad</a> · <a href="#" data-page="terms" data-t="terms">Términos del Servicio</a> · <a href="#" data-page="contact" data-t="contact">Contacto</a></footer><div id="modal" class="modal"><div class="box"><button id="close">×</button><h2 id="mt"></h2><p id="md"></p><div id="mb"></div></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+<script>if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js"</script>
+<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+<script>window.pageLang="es"</script>
+<script src="../script.js"></script>
+<script>
+(function(){
+const WORKER_URL="https://dawn-pine-47e3.zwhappyboy.workers.dev";
+const POLL_MS=5000;
+const MAX_POLL=60;
+const MAX_INVOICES=50;
+const IMG_EXTS=['.png','.jpg','.jpeg','.gif','.bmp','.tiff','.tif','.webp'];
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const FALSE_SWIFTS=['TRANSFER','PAYMENT','INVOICE','REMITTANCE','INCLUDED','CROSS','BORDER'];
+
+function extractSWIFT(text){const c=text.match(/\b([A-Z]{4}[A-Z]{2}[A-Z0-9]{2}(?:[A-Z0-9]{3})?)\b/g)||[];for(const x of c){if(!FALSE_SWIFTS.includes(x))return x}return''}
+function isAmountValue(t){return/^[$\u20ac\u00a3\u00a5]?\s*[\d,]+\.\d+$/.test(t)||t==='Included'||/^[$\u20ac\u00a3\u00a5]?\s*0\.00$/.test(t)}
+function extractAmountNum(t){let m=t.match(/([\d,]+\.\d+)/);return m?m[1]:(t==='Included'?'Included':'')}
+
+function extractAmountsSemantic(els){let r={};let si=-1,ei=els.length;for(let i=0;i<els.length;i++){let t=(els[i].text||'').trim();if(/^Subtotal:?$|^Total Due:?$|^(Tax|VAT|GST)[^:]*:?$|^Discount:?$|^(Freight|Shipping|Handling|Processing Fee)[^:]*:?$/i.test(t)){if(si<0)si=i}if(/Payment Instructions|Tax Notice|Terms/i.test(t)&&els[i].type!=='Table'){if(si>=0){ei=i;break}}}if(si<0)return r;let sec=els.slice(si,ei);let lb=[],vl=[];for(let i=0;i<sec.length;i++){let t=(sec[i].text||'').trim();if(!t)continue;if(/Subtotal:?$/i.test(t)){lb.push({i,k:'subtotal'});continue}if(/Total Due:?$/i.test(t)){lb.push({i,k:'total'});continue}if(/^(Tax|VAT|GST)[^:]*:?\s*$/i.test(t)){lb.push({i,k:'tax'});continue}if(/Discount:?$/i.test(t)){lb.push({i,k:'discount'});continue}if(/^(Freight|Shipping|Handling|Processing Fee)[^:]*:?\s*$/i.test(t)){lb.push({i,k:'freight'});continue}if(isAmountValue(t))vl.push({i,t})}if(lb.length>0&&vl.length>0){let ml=Math.max(...lb.map(l=>l.i));let mv=Math.min(...vl.map(v=>v.i));if(ml<mv){if(vl.length>=2){r.subtotal=extractAmountNum(vl[0].t);r.total=extractAmountNum(vl[vl.length-1].t)}for(let i=0;i<Math.min(lb.length,vl.length);i++){if(lb[i].k==='tax'&&!r.tax){let v=extractAmountNum(vl[i].t);if(v&&v!==r.subtotal&&v!==r.total)r.tax=v}if(lb[i].k==='freight'&&!r.freight){let v=extractAmountNum(vl[i].t);if(v)r.freight=v}if(lb[i].k==='discount'&&!r.discount){let v=extractAmountNum(vl[i].t);if(v&&v!==r.subtotal&&v!==r.total)r.discount=v}}if(!r.tax&&vl.length>=3){for(let i=1;i<vl.length-1;i++){let v=extractAmountNum(vl[i].t);if(v==='0.00'){r.tax=v;break}}}if(!r.freight){for(const v of vl){if(v.t==='Included'){r.freight='Included';break}}}}else{for(const l of lb){for(const v of vl){if(v.i>l.i){let n=extractAmountNum(v.t);if(n){if(l.k==='subtotal')r.subtotal=n;else if(l.k==='total')r.total=n;else if(l.k==='tax')r.tax=n;else if(l.k==='discount')r.discount=n;else if(l.k==='freight')r.freight=n}break}}}}}return r}
+
+function parseCN(els){let r={invoiceNumber:'',invoiceDate:'',payerName:'',sellerName:'',amount:'',taxAmount:'',totalAmount:'',receiptCode:'',checksum:'',amountWords:''};const all=els.map(e=>(e.text||'').trim()).filter(Boolean).join('\n');let m;m=all.match(/\u7968\u636e\u53f7\u7801[\uff1a:]\s*(\S+)/);if(m)r.invoiceNumber=m[1];if(!r.invoiceNumber){m=all.match(/No\.\s*(\d+)/);if(m)r.invoiceNumber=m[1]}m=all.match(/\u5f00\u7968\u65e5\u671f[\uff1a:]\s*(\d{4}[-\/\u5e74]\d{1,2}[-\/\u6708]\d{1,2}\u65e5?)/);if(m){let d=m[1].replace(/\u5e74/g,'-').replace(/\u6708/g,'-').replace(/\u65e5/g,'');let p=d.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);if(p)r.invoiceDate=p[1]+'-'+p[2].padStart(2,'0')+'-'+p[3].padStart(2,'0')}m=all.match(/\u4ea4\u6b3e\u4eba[\uff1a:]\s*([\u4e00-\u9fa5]+)/);if(m)r.payerName=m[1];m=all.match(/\u6536\u6b3e\u5355\u4f4d[\uff08(]\u7ae0[)\uff09][\uff1a:]?\s*([\u4e00-\u9fa5]+)/);if(!m)m=all.match(/\u6536\u6b3e\u5355\u4f4d[\uff08(]\u7ae0[)\uff09][\uff1a:]?\s*(\S+)/);if(m)r.sellerName=m[1];m=all.match(/\u7968\u636e\u4ee3\u7801[\uff1a:]\s*(\S+)/);if(m)r.receiptCode=m[1];m=all.match(/\u6821\u9a8c\u7801[\uff1a:]\s*(\S+)/);if(m)r.checksum=m[1];m=all.match(/\u91d1\u989d\u5408\u8ba1[\uff08(]\u5927\u5199[)\uff09]\s*([\u4e00-\u9fa5\u96f6\u58f9\u8d30\u53c1\u8086\u4f0d\u9646\u67d2\u634c\u7396\u62fe\u4f70\u4edf\u4e07\u4ebf\u89d2\u5206\u6574\u6b63]+)\s*[\uff08(]\u5c0f\u5199[)\uff09]\s*([\d.]+)/);if(m){r.amountWords=m[1];r.totalAmount=m[2]}m=all.match(/\u4ef7\u7a0e\u5408\u8ba1[\uff08(]\u5927\u5199[)\uff09]\s*([\u4e00-\u9fa5\u96f6\u58f9\u8d30\u53c1\u8086\u4f0d\u9646\u67d2\u634c\u7396\u62fe\u4f70\u4edf\u4e07\u4ebf\u89d2\u5206\u6574\u6b63]+)\s*[\uff08(]\u5c0f\u5199[)\uff09][\uffa5\u00a5]?\s*([\d,.]+)/);if(m){r.amountWords=m[1];r.totalAmount=m[2]}m=all.match(/\u7a0e\u989d[\uff1a:]\s*\uffe5?([\d,.]+)/);if(m)r.taxAmount=m[1];if(r.totalAmount&&!r.amount)r.amount=r.totalAmount;return r}
+
+function parseEN(els){let pages=[];let cur=[];for(const el of els){if(el.type==='PageNumber'){if(cur.length>0)pages.push(cur);cur=[]}else cur.push(el)}if(cur.length>0)pages.push(cur);if(pages.length===0&&els.length>0)pages.push(els);return pages.map(p=>parseSingleEN(p))}
+
+function parseSingleEN(els){let r={invoiceNumber:'',invoiceDate:'',dueDate:'',vendorName:'',vendorAddress:'',vendorTaxId:'',billTo:'',subtotal:'',tax:'',totalAmount:'',currency:'',poNumber:'',paymentTerms:'',paymentMethod:'',bankName:'',swiftBic:'',iban:'',accountNumber:'',customerTaxId:'',invoiceType:'',itemDescription:'',discount:'',freight:''};const all=els.map(e=>(e.text||'').trim()).filter(Boolean).join('\n');const tt=els.filter(e=>e.type==='Table').map(e=>(e.text||'').trim());let m;m=all.match(/#\s*([A-Z]{2,}[-/]?\d{2,}[-/]?\d*)/);if(m)r.invoiceNumber=m[1].replace(/\s+/g,'');if(!r.invoiceNumber){m=all.match(/INVOICE\s*#?\s*([A-Z0-9][-A-Z0-9]+)/i);if(m)r.invoiceNumber=m[1]}const vIdx=els.findIndex(e=>(e.text||'').includes('VENDOR')&&e.type==='Title');const bIdx=els.findIndex(e=>(e.text||'').includes('BILL TO')&&e.type==='Title');
+if(vIdx>=0&&bIdx>=0&&bIdx===vIdx+1){for(let i=bIdx+1;i<els.length;i++){if(els[i].type==='Title'||els[i].type==='Table')break;const t=(els[i].text||'').trim();if(!t)continue;let es=t.split(/Email:\s*\S+/i);let vs=es[0]||t;let cs=es[1]||'';let vtm=vs.match(/EIN\s*\/\s*Tax ID:\s*(\S+)/i);if(vtm)r.vendorTaxId=vtm[1];if(!r.vendorTaxId){let vvm=vs.match(/(?:EU VAT ID|VAT ID|UEN|BRN)\s*\/\s*Tax ID:\s*(\S+)/i);if(vvm)r.vendorTaxId=vvm[1]}let ctm=cs.match(/(?:BRN|VAT ID|EIN|ABN|UEN)\s*\/\s*Tax ID:\s*(\S+)/i);if(ctm)r.customerTaxId=ctm[1];let vm=t.match(/^([A-Z][\w &.]+?(?:Inc\.|LLC|Ltd\.|GmbH|B\.V\.|Pty|S\.p\.A\.))\s/);if(vm)r.vendorName=vm[1].trim();if(r.vendorName){let an=t.substring(r.vendorName.length).trim();let ae=an.search(/EIN|VAT ID|UEN|BRN/i);if(ae>0)r.vendorAddress=an.substring(0,ae).trim()}let btm=cs.match(/^(.+?)(?:\s+(?:BRN|VAT ID|EIN|ABN|UEN)\s*\/|\s+Contact:)/i);if(btm)r.billTo=btm[1].trim();if(!r.billTo){let cl=cs.replace(/(?:BRN|VAT ID|EIN|ABN|UEN)\s*\/\s*Tax ID:\s*\S+/gi,'').replace(/Contact:\s*\S+/i,'').trim();r.billTo=cl}break}}else if(vIdx>=0){for(let i=vIdx+1;i<els.length;i++){if(els[i].type==='Title')break;const t=(els[i].text||'').trim();if(t&&!t.includes('VENDOR')&&t.length>2){r.vendorName=t;break}}let al=[];let fn=false;for(let i=vIdx+1;i<els.length;i++){if(els[i].type==='Title')break;const t=(els[i].text||'').trim();if(!t)continue;if(/EIN|VAT ID|UEN|BRN/i.test(t)){let tm=t.match(/(?:EIN|VAT ID|UEN|BRN)\s*\/?\s*Tax ID:\s*(.+)/i);if(tm)r.vendorTaxId=tm[1].trim();continue}if(/Email:/i.test(t))continue;if(!fn&&t===r.vendorName){fn=true;continue}if(fn)al.push(t)}r.vendorAddress=al.join(', ')}
+if(bIdx>=0&&!(vIdx>=0&&bIdx===vIdx+1)){let bl=[];for(let i=bIdx+1;i<els.length;i++){if(els[i].type==='Title'||els[i].type==='Table')break;const t=(els[i].text||'').trim();if(!t)continue;if(/VAT ID:|EIN|ABN|UEN/i.test(t)){let tm=t.match(/(?:VAT ID|EIN|ABN|UEN)\s*\/?\s*Tax ID?:?\s*(.+)/i);if(tm)r.customerTaxId=tm[1].trim();continue}if(/Contact:/i.test(t))continue;bl.push(t)}r.billTo=bl.join(', ')}
+const ht=tt.find(t=>/Invoice Date/i.test(t))||'';if(ht){m=ht.match(/Invoice Date:\s*([A-Za-z]+\s+\d{1,2},?\s*\d{4})/);if(!m)m=ht.match(/Invoice Date:\s*(\d{1,2}\s+[A-Za-z]+\s+\d{4})/);if(m)r.invoiceDate=m[1];else{let mm=ht.match(/Invoice Date:\s*(\w+)/);if(mm&&MONTHS.includes(mm[1])){let mo=mm[1];let dm=ht.match(/(\d{1,2})\s+Net/)||ht.match(/Invoice Date:\s*\w+\s+(\d{1,2})/);let ym=ht.match(/(\d{4})/);if(dm&&ym)r.invoiceDate=mo+' '+dm[1]+', '+ym[1];else if(ym)r.invoiceDate=mo+', '+ym[1]}}m=ht.match(/Due Date:\s*([A-Za-z]+\s+\d{1,2},?\s*\d{4})/);if(!m)m=ht.match(/Due Date:\s*(\d{1,2}\s+[A-Za-z]+\s+\d{4})/);if(m)r.dueDate=m[1];else{let mm=ht.match(/Due Date:\s*(\w+)/);if(mm&&MONTHS.includes(mm[1])){let mo=mm[1];let ad=ht.split(/Due Date:/)[1]||'';let dm=ad.match(new RegExp(mo+'\\s*(\\d{1,2})'));if(!dm)dm=ad.match(/\b(\d{1,2})\b/);let ym=ht.match(/(\d{4})/g);let y=ym?ym[0]:'';if(dm&&y)r.dueDate=mo+' '+dm[1]+', '+y;else if(y)r.dueDate=mo+', '+y}}m=ht.match(/(Net\s+\d+\s+Days?)/i);if(m)r.paymentTerms=m[1];else{m=ht.match(/Payment Terms:\s*(.+?)(?:\s+Due Date|\s+PO Reference|\s+Currency|\s+Account|\s+\d{4}\s|$)/);if(m){let pt=m[1].trim();let pc=pt.match(/(Net\s+\d+\s+Days?)/i);if(pc)pt=pc[1];r.paymentTerms=pt}}let ps=ht.match(/PO Reference:\s*(.+?)(?:\s+Currency|\s+Account|\s+\n|$)/i);if(ps){let pr=ps[1].trim().split(/\s+/)[0];let pm=pr.match(/([A-Z][-A-Z0-9]+)/);if(pm)r.poNumber=pm[1];else r.poNumber=pr}m=ht.match(/Currency:\s*(\w+)\s*\(/);if(m)r.currency=m[1]}
+if(!r.invoiceDate){m=all.match(/Invoice Date:\s*([A-Za-z]+\s+\d{1,2},?\s*\d{4})/);if(m)r.invoiceDate=m[1]}if(!r.dueDate){m=all.match(/Due Date:\s*([A-Za-z]+\s+\d{1,2},?\s*\d{4})/);if(m)r.dueDate=m[1]}if(!r.currency){m=all.match(/Currency:\s*(\w+)\s*\(/);if(m)r.currency=m[1]}
+const bt=tt.find(t=>/WIRE TRANSFER|REMITTANCE|Bank Name:|SWIFT/i.test(t))||'';const bn=els.find(e=>e.type==='NarrativeText'&&/Bank Name:|SWIFT/i.test(e.text||''));const btxt=bt||(bn?(bn.text||'').trim():'');if(btxt){m=btxt.match(/Bank Name:\s*(.+?)(?:\s+Account Name:|\s+SWIFT|\s+IBAN|\s+Subtotal:|\s+GST|\s+Tax|\s+Discount|\n|$)/);if(m)r.bankName=m[1].trim();r.swiftBic=extractSWIFT(btxt);if(!r.swiftBic)r.swiftBic=extractSWIFT(all);m=btxt.match(/IBAN:\s*([\w\s-]+)/);if(m){let ib=m[1].trim().replace(/\s+(?:Total|Subtotal|Discount|Tax|Payment|Handling).*/i,'');r.iban=ib}if(!r.iban){m=btxt.match(/Account\s*\/\s*IBAN:\s*([\w\s-]+)/);if(m){let v=m[1].trim().replace(/\s+(?:Total|Subtotal|Discount|Tax|Payment|Handling).*/i,'');r.iban=v;r.accountNumber=v}}m=btxt.match(/Account\s*\/\s*Routing:\s*([\w\s-]+)/);if(m){let v=m[1].trim().replace(/\s+(?:Total|Subtotal|Discount|Tax|Payment|Handling).*/i,'');r.accountNumber=v}}if(!r.bankName){m=all.match(/Bank Name:\s*(.+?)(?:\s+Account Name:|\s+SWIFT|\n|$)/);if(m)r.bankName=m[1].trim()}if(!r.swiftBic)r.swiftBic=extractSWIFT(all);if(!r.iban){m=all.match(/Account\s*\/\s*IBAN:\s*([\w\s]+)/);if(m){r.iban=m[1].trim();r.accountNumber=m[1].trim()}}
+const at=tt.find(t=>/Subtotal:|Total Due:/i.test(t))||'';if(at){m=at.match(/Subtotal:\s*[$\u20ac\u00a3\u00a5]?\s*([\d,]+\.\d+)/);if(m)r.subtotal=m[1];m=at.match(/Total Due:\s*[$\u20ac\u00a3\u00a5]?\s*([\d,]+\.\d+)/);if(m)r.totalAmount=m[1];m=at.match(/(?:Tax|VAT|GST)[^:\n]*:\s*[$\u20ac\u00a3\u00a5]?\s*(Included|0\.00|[\d,]+\.\d+)/);if(m)r.tax=m[1];m=at.match(/Discount:\s*[$\u20ac\u00a3\u00a5]?\s*([\d,]+\.\d+)/);if(m)r.discount=m[1];m=at.match(/(?:Freight|Shipping|Shipping Cost|Handling Fee):\s*[$\u20ac\u00a3\u00a5]?\s*([\d,]+\.\d+|Included)/);if(m)r.freight=m[1]}
+const sa=extractAmountsSemantic(els);if(!r.subtotal&&sa.subtotal)r.subtotal=sa.subtotal;if(!r.totalAmount&&sa.total)r.totalAmount=sa.total;if(!r.tax&&sa.tax)r.tax=sa.tax;if(!r.discount&&sa.discount)r.discount=sa.discount;if(!r.freight&&sa.freight)r.freight=sa.freight;
+if(!r.subtotal){m=all.match(/Subtotal:\s*[$\u20ac\u00a3\u00a5]?\s*([\d,]+\.\d+)/);if(m)r.subtotal=m[1]}if(!r.totalAmount){m=all.match(/Total Due:\s*[$\u20ac\u00a3\u00a5]?\s*([\d,]+\.\d+)/);if(m)r.totalAmount=m[1]}for(const t of tt){if(/DESCRIPTION.*QTY/i.test(t)){let items=t.replace(/DESCRIPTION\s+QTY\s+UNIT PRICE.*?AMOUNT.*?\n?/i,'');let lines=items.split(/\s{2,}|(?<=\d)\s+(?=[A-Z])/);let di=[];for(const l of lines){let d=l.replace(/\d+\s*[$\u20ac\u00a3\u00a5]\s*[\d,.]+\s*[$\u20ac\u00a3\u00a5]\s*[\d,.]+$/,'').trim();if(d.length>3)di.push(d);if(di.length>=3)break}r.itemDescription=di.join('; ').substring(0,300);break}}if(/WIRE TRANSFER|wire transfer/i.test(all))r.paymentMethod='Wire Transfer';else if(/ACH/i.test(all))r.paymentMethod='ACH';r.invoiceType=/TAX INVOICE/i.test(all)?'Tax Invoice':'Invoice';return r}
+
+function detectLang(els){const all=els.map(e=>(e.text||'').trim()).filter(Boolean).join(' ');const cn=(all.match(/[\u4e00-\u9fa5]/g)||[]).length;return all.length>0&&cn/all.length>0.15?'cn':'en'}
+
+// API functions
+async function uploadFile(file){let fd=new FormData();fd.append('file',file,file.name);let r=await fetch(WORKER_URL+'/api/unstruct/extract',{method:'POST',body:fd});let d=await r.json();if(!r.ok||!d.jobId)throw new Error(d.error||'Upload failed');return d.jobId}
+async function waitJob(jobId,onP){for(let i=0;i<MAX_POLL;i++){let r=await fetch(WORKER_URL+'/api/unstruct/status?jobId='+encodeURIComponent(jobId));let d=await r.json();if(!r.ok)throw new Error(d.error||'Status failed');let s=(d.status||'').toLowerCase();if(s==='completed')return d;if(s==='failed')throw new Error('Extraction failed');if(onP)onP(d.status);await new Promise(r=>setTimeout(r,POLL_MS))}throw new Error('Timeout')}
+async function downloadJob(url){let r=await fetch(WORKER_URL+'/api/unstruct/download?url='+encodeURIComponent(url));if(!r.ok)throw new Error('Download failed');return await r.text()}
+
+// Main
+let invoiceFiles=[];
+const container=document.querySelector('#grid');
+if(container){
+const wrap=document.createElement('div');wrap.style.cssText='max-width:800px;margin:0 auto;padding:20px';
+wrap.innerHTML=`
+<div class="notice" style="background:#f0f5ff;border:1px solid #d7dee9;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#42506b">Herramienta via API Unstructured.io, archivos subidos a servidor externo</div>
+<label class="filelabel" style="cursor:pointer"><span>Elegir archivos (imágenes, PDFs, ZIP, multi-selección)</span><span class="filename">Ningún archivo seleccionado</span><input id="invFile" type="file" accept=".png,.jpg,.jpeg,.gif,.bmp,.tiff,.tif,.webp,.pdf,.zip" multiple style="display:none"></label>
+<div id="invList" style="margin:12px 0;font-size:13px;color:#728095"></div>
+<button class="run" id="invRun" style="display:none">Iniciar Extracción</button>
+<div id="invOut" style="margin-top:16px"></div>
+`;
+container.parentElement.insertBefore(wrap,container);
+const fi=wrap.querySelector('#invFile');
+const fl=wrap.querySelector('.filename');
+const listEl=wrap.querySelector('#invList');
+const runBtn=wrap.querySelector('#invRun');
+const out=wrap.querySelector('#invOut');
+
+async function processFiles(){
+  out.innerHTML='';
+  const allFiles=[];
+  // Expand ZIPs
+  for(const f of invoiceFiles){
+    if(f.name.toLowerCase().endsWith('.zip')){
+      try{
+        const zip=await JSZip.loadAsync(f);
+        for(const name in zip.files){
+          if(zip.files[name].dir)continue;
+          const ext=name.split('.').pop().toLowerCase();
+          if(IMG_EXTS.includes('.'+ext)||ext==='pdf'){
+            const blob=await zip.files[name].async('blob');
+            allFiles.push(new File([blob],name.split('/').pop(),{type:blob.type}));
+          }
+        }
+      }catch(e){console.error('ZIP error:',e)}
+    }else{allFiles.push(f)}
+  }
+  if(allFiles.length>MAX_INVOICES){
+    out.innerHTML='<p style="color:#e53e3e;font-weight:600">\u274f Max 50 facturas por lote, seleccionó '+allFiles.length+', límite excedido</p>';
+    return;
+  }
+  runBtn.disabled=true;
+  const cnResults=[],enResults=[];let ok=0,fail=0;
+  for(let i=0;i<allFiles.length;i++){
+    const f=allFiles[i];
+    out.innerHTML='<p style="color:#2563eb">Procesando '+(i+1)+'/'+allFiles.length+' / '+f.name+'...</p>';
+    try{
+      const jobId=await uploadFile(f);
+      const info=await waitJob(jobId);
+      if(!info.downloadUrl)throw new Error('No download URL');
+      const text=await downloadJob(info.downloadUrl);
+      const elements=JSON.parse(text);
+      const lang=detectLang(elements);
+      if(lang==='cn'){
+        const r=parseCN(elements);r.fileName=f.name;r.status='OK';cnResults.push(r);
+      }else{
+        const invoices=parseEN(elements);
+        for(const inv of invoices){inv.fileName=f.name;inv.status='OK';enResults.push(inv)}
+      }
+      ok++;
+    }catch(e){
+      const lang=f.name.toLowerCase().match(/[\u4e00-\u9fa5]/)?'cn':'en';
+      if(lang==='cn')cnResults.push({fileName:f.name,status:'ERROR: '+e.message.substring(0,100)});
+      else enResults.push({fileName:f.name,status:'ERROR: '+e.message.substring(0,100)});
+      fail++;
+    }
+  }
+  // Generate Excel
+  out.innerHTML='<p style="color:#2563eb">Generando Excel...</p>';
+  const cnHeaders=['No.','File Name','Invoice Number','Invoice Date','Buyer/Payer','Seller/Payee','Amount','Tax','Total','Receipt Code','Checksum','Amount (Words)','Status'];
+  const enHeaders=['No.','File Name','Invoice Number','Invoice Date','Due Date','Vendor Name','Vendor Address','Vendor Tax ID','Bill To','Subtotal','Tax','Total Amount','Currency','PO Number','Payment Terms','Payment Method','Bank Name','SWIFT/BIC','IBAN','Account Number','Customer Tax ID','Invoice Type','Item Description','Discount','Freight','Status'];
+  const cnRows=cnResults.map((r,i)=>[i+1,r.fileName||'',r.invoiceNumber||'',r.invoiceDate||'',r.payerName||'',r.sellerName||'',r.amount||'',r.taxAmount||'',r.totalAmount||'',r.receiptCode||'',r.checksum||'',r.amountWords||'',r.status||'OK']);
+  const enRows=enResults.map((r,i)=>[i+1,r.fileName||'',r.invoiceNumber||'',r.invoiceDate||'',r.dueDate||'',r.vendorName||'',r.vendorAddress||'',r.vendorTaxId||'',r.billTo||'',r.subtotal||'',r.tax||'',r.totalAmount||'',r.currency||'',r.poNumber||'',r.paymentTerms||'',r.paymentMethod||'',r.bankName||'',r.swiftBic||'',r.iban||'',r.accountNumber||'',r.customerTaxId||'',r.invoiceType||'',r.itemDescription||'',r.discount||'',r.freight||'',r.status||'OK']);
+  if(window.XLSX){
+    const wb=XLSX.utils.book_new();
+    if(cnRows.length>0){const ws=XLSX.utils.aoa_to_sheet([cnHeaders,...cnRows]);XLSX.utils.book_append_sheet(wb,ws,'Facturas locales')}
+    if(enRows.length>0){const ws=XLSX.utils.aoa_to_sheet([enHeaders,...enRows]);XLSX.utils.book_append_sheet(wb,ws,'Facturas extranjeras')}
+    if(cnRows.length===0){const ws=XLSX.utils.aoa_to_sheet([cnHeaders]);XLSX.utils.book_append_sheet(wb,ws,'Facturas locales')}
+    if(enRows.length===0){const ws=XLSX.utils.aoa_to_sheet([enHeaders]);XLSX.utils.book_append_sheet(wb,ws,'Facturas extranjeras')}
+    const arr=XLSX.write(wb,{type:'array',bookType:'xlsx'});
+    const blob=new Blob([arr],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='invoices_output.xlsx';a.click();
+  }
+  out.innerHTML='<p style="color:#38a169;font-weight:600">\u2713 Listo! Exitosas: '+ok+', Fallidas: '+fail+', Excel descargado</p>';
+  runBtn.disabled=false;
+}
+
+fi.onchange=()=>{
+  invoiceFiles=[...fi.files];
+  let count=invoiceFiles.length;
+  fl.textContent=count>1?count+' files':(invoiceFiles[0]?.name||'Ningún archivo seleccionado');
+  // Quick count check (ZIPs may expand)
+  let zipCount=invoiceFiles.filter(f=>f.name.toLowerCase().endsWith('.zip')).length;
+  if(zipCount>0){
+    listEl.textContent='Contiene '+zipCount+' archivo(s) ZIP, extracción automática y conteo (más de 50 será bloqueado)';
+  }else{
+    listEl.textContent='';
+  }
+  // For non-zip, check immediately
+  if(zipCount===0&&count>MAX_INVOICES){
+    listEl.innerHTML='<span style="color:#e53e3e">\u274f Límite excedido: máx 50 por lote, seleccionó '+count+' </span>';
+    runBtn.style.display='none';
+  }else{
+    runBtn.style.display=count>0?'':'none';
+  }
+};
+runBtn.onclick=processFiles;
+}
+})();
+</script></body></html>
