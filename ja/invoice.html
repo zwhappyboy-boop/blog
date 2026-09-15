@@ -629,34 +629,57 @@ if(container){
   }
 
   function generateExcel(results){
-    // 统一列设计：核心字段 + 税务字段 + 国家扩展字段
-    const headers=["No.","ファイル名","国","請求書番号","発行日","販売者名","購入者名","販売者税番号","購入者税番号","通貨","小計","税額","合計","支払状況","支払期限","税種類","税率","税額詳細","請求書コード","検証コード","機械番号","受取人","検分者","開票者","販売者住所電話","購入者住所電話","販売者銀行口座","購入者銀行口座","合計（大文字）","PO番号","支払条件","支払方法","銀行名","SWIFT/BIC","IBAN","口座番号","商品説明","割引","運賃","ステータス"];
+    // 按国家分表：国内发票(CN)与中国税务字段表头；国外发票用国际字段表头
+    const cnResults=results.filter(r=>r.country==='CN');
+    const intlResults=results.filter(r=>r.country!=='CN');
 
-    const rows=results.map((r,i)=>{
-      const c=r.core||{},cs=r.country_specific||{};
-      const taxInfo=(r.taxes||[]).map(t=>t.type).join('; ')||'';
-      const taxRates=(r.taxes||[]).map(t=>t.rate?(t.rate*100).toFixed(2)+'%':'').join('; ')||'';
-      const taxAmounts=(r.taxes||[]).map(t=>t.amount||'').join('; ')||'';
-      return [
-        i+1,r.fileName||'',r.country||'',
-        c.invoice_number||'',c.invoice_date||'',c.seller_name||'',c.buyer_name||'',
-        c.seller_tax_id||'',c.buyer_tax_id||'',c.currency||'',c.subtotal||'',c.tax_amount||'',c.total_amount||'',
-        c.payment_status||'',c.due_date||'',
-        taxInfo,taxRates,taxAmounts,
-        cs.invoice_code||'',cs.check_code||'',cs.machine_number||'',cs.payee||'',cs.reviewer||'',cs.drawer||'',
-        cs.seller_address||'',cs.buyer_address||'',cs.seller_bank||'',cs.buyer_bank||'',
-        cs.amount_words||'',
-        cs.po_number||'',cs.payment_terms||'',cs.payment_method||'',cs.bank_name||'',cs.swift_bic||'',cs.iban||'',cs.account_number||'',
-        cs.item_description||'',cs.discount||'',cs.freight||'',r.status||'OK'
-      ];
-    });
+    const cnHeaders=["No.","ファイル名","請求書番号","発行日","販売者名","購入者名","販売者税番号","購入者税番号","通貨","小計","税額","合計","支払状況","税種類","税率","税額詳細","請求書コード","検証コード","機械番号","受取人","検分者","開票者","販売者住所電話","購入者住所電話","販売者銀行口座","購入者銀行口座","合計（大文字）","ステータス"];
+    const intlHeaders=["No.","ファイル名","国","請求書番号","発行日","販売者名","購入者名","販売者税番号","購入者税番号","通貨","小計","税額","合計","支払状況","支払期限","税種類","税率","税額詳細","PO番号","支払条件","支払方法","銀行名","SWIFT/BIC","IBAN","口座番号","商品説明","割引","運賃","ステータス"];
+
+    const buildRows=(list,kind)=>{
+      return list.map((r,idx)=>{
+        const c=r.core||{},cs=r.country_specific||{};
+        const taxInfo=(r.taxes||[]).map(t=>t.type).join('; ')||'';
+        const taxRates=(r.taxes||[]).map(t=>t.rate?(t.rate*100).toFixed(2)+'%':'').join('; ')||'';
+        const taxAmounts=(r.taxes||[]).map(t=>t.amount||'').join('; ')||'';
+        if(kind==='cn'){
+          return [
+            idx+1,r.fileName||'',
+            c.invoice_number||'',c.invoice_date||'',c.seller_name||'',c.buyer_name||'',
+            c.seller_tax_id||'',c.buyer_tax_id||'',c.currency||'',c.subtotal||'',c.tax_amount||'',c.total_amount||'',
+            c.payment_status||'',
+            taxInfo,taxRates,taxAmounts,
+            cs.invoice_code||'',cs.check_code||'',cs.machine_number||'',
+            cs.payee||'',cs.reviewer||'',cs.drawer||'',
+            cs.seller_address||'',cs.buyer_address||'',
+            cs.seller_bank||'',cs.buyer_bank||'',
+            cs.amount_words||'',
+            r.status||'OK'
+          ];
+        }
+        return [
+          idx+1,r.fileName||'',r.country||'',
+          c.invoice_number||'',c.invoice_date||'',c.seller_name||'',c.buyer_name||'',
+          c.seller_tax_id||'',c.buyer_tax_id||'',c.currency||'',c.subtotal||'',c.tax_amount||'',c.total_amount||'',
+          c.payment_status||'',c.due_date||'',
+          taxInfo,taxRates,taxAmounts,
+          cs.po_number||'',cs.payment_terms||'',cs.payment_method||'',
+          cs.bank_name||'',cs.swift_bic||'',cs.iban||'',cs.account_number||'',
+          cs.item_description||'',cs.discount||'',cs.freight||'',
+          r.status||'OK'
+        ];
+      });
+    };
 
     if(window.XLSX){
       const wb=XLSX.utils.book_new();
-      const ws=XLSX.utils.aoa_to_sheet([headers,...rows]);
-      // 设置列宽
-      ws['!cols']=headers.map(h=>({wch:Math.max(h.length*2,12)}));
-      XLSX.utils.book_append_sheet(wb,ws,'請求書統計');
+      const addSheet=(headers,rows,sheetName)=>{
+        const ws=XLSX.utils.aoa_to_sheet([headers,...rows]);
+        ws['!cols']=headers.map(hh=>({wch:Math.max(hh.length*2,12)}));
+        XLSX.utils.book_append_sheet(wb,ws,sheetName);
+      };
+      if(cnResults.length>0)addSheet(cnHeaders,buildRows(cnResults,'cn'),'中国インボイス');
+      if(intlResults.length>0)addSheet(intlHeaders,buildRows(intlResults,'intl'),'海外インボイス');
       const arr=XLSX.write(wb,{type:'array',bookType:'xlsx'});
       const blob=new Blob([arr],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
       const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='invoices_output.xlsx';a.click();
