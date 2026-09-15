@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head>
+﻿<!doctype html><html lang="fr"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Extraction par lots de factures et export Excel · Boîte à Outils Universelle">
 <link rel="canonical" href="https://zhouyixuan.com/fr/invoice.html">
@@ -26,7 +26,7 @@ body.dark .inv-notice{background:#171d28;border-color:#303846;color:#aebad0}body
 <section class="hero"><small data-t="eyebrow">Gratuit · Rapide · Confidentialité</small><h1 data-t="invoiceTitle">Statistiques de Factures</h1><p data-t="invoiceDesc">Prend en charge les factures TVA chinoises, américaines et européennes. Détecte le pays, extrait des champs unifiés et exporte vers Excel</p></section>
 <div class="ad">Advertisement</div>
 <div id="invoice-app">
-  <div class="inv-notice">Cet outil utilise l'API cloud Unstructured.io pour extraire les informations de factures. Les fichiers sont téléchargés sur un serveur tiers. Prend en charge les factures de Chine, États-Unis, Europe, etc. Détecte le pays et unifie les champs.</div>
+  <div class="inv-notice">Cet outil utilise l'API cloud Mistral OCR pour extraire les informations de factures. Les fichiers sont téléchargés sur un serveur tiers. Prend en charge les factures de Chine, États-Unis, Europe, etc. Détecte le pays et unifie les champs.</div>
   <label class="inv-filelabel"><span>Sélectionner des fichiers (images, PDF, ZIP, sélection multiple)</span><span class="filename">Aucun fichier sélectionné</span><input id="invFile" type="file" accept=".png,.jpg,.jpeg,.gif,.bmp,.tiff,.tif,.webp,.pdf,.zip" multiple style="display:none"></label>
   <div class="inv-list" id="invList"></div>
   <button class="inv-run" id="invRun" style="display:none">Commencer l'extraction</button>
@@ -572,9 +572,7 @@ function parseInvoice(els){
 }
 
 /* ========== API 函数 ========== */
-async function uploadFile(file){let fd=new FormData();fd.append('file',file,file.name);let r=await fetch(WORKER_URL+'/api/unstruct/extract',{method:'POST',body:fd});let d=await r.json();if(!r.ok||!d.jobId)throw new Error(d.error||'Upload failed');return d.jobId}
-async function waitJob(jobId,onP){for(let i=0;i<MAX_POLL;i++){let r=await fetch(WORKER_URL+'/api/unstruct/status?jobId='+encodeURIComponent(jobId));let d=await r.json();if(!r.ok)throw new Error(d.error||'Status failed');let s=(d.status||'').toLowerCase();if(s==='completed')return d;if(s==='failed')throw new Error('Extraction failed');if(onP)onP(d.status);await new Promise(r=>setTimeout(r,POLL_MS))}throw new Error('Timeout')}
-async function downloadJob(url){let r=await fetch(WORKER_URL+'/api/unstruct/download?url='+encodeURIComponent(url));if(!r.ok)throw new Error('Download failed');return await r.text()}
+async function mistralOCR(file){let fd=new FormData();fd.append('file',file,file.name);let r=await fetch(WORKER_URL+'/api/mistral/ocr',{method:'POST',body:fd});let d=await r.json();if(!r.ok||!d.elements)throw new Error(d.error||'OCR failed');return d.elements}
 
 /* ========== 主流程 ========== */
 let invoiceFiles=[];
@@ -614,11 +612,7 @@ if(container){
       const f=allFiles[i];
       out.innerHTML='<p style="color:#2563eb">正在处理第 '+(i+1)+'/'+allFiles.length+' 张：'+f.name+'...</p>';
       try{
-        const jobId=await uploadFile(f);
-        const info=await waitJob(jobId);
-        if(!info.downloadUrl)throw new Error('No download URL');
-        const text=await downloadJob(info.downloadUrl);
-        const elements=JSON.parse(text);
+        const elements=await mistralOCR(f);
         const invoices=parseInvoice(elements);
         for(const inv of invoices){inv.fileName=f.name;inv.status='OK';results.push(inv)}
         ok++;
