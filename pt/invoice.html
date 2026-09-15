@@ -623,14 +623,14 @@ if(container){
       }else{allFiles.push(f)}
     }
     if(allFiles.length>MAX_INVOICES){
-      out.innerHTML='<p style="color:#e53e3e;font-weight:600">\u274f 每次最多处理 50 张发票，当前选择了 '+allFiles.length+' 张，请减少文件后重试</p>';
+      out.innerHTML='<p style="color:#e53e3e;font-weight:600">\u274f Máximo de 50 faturas por lote. Você selecionou '+allFiles.length+'. Reduza a quantidade e tente novamente</p>';
       return;
     }
     runBtn.disabled=true;
     const results=[];let ok=0,fail=0;
     for(let i=0;i<allFiles.length;i++){
       const f=allFiles[i];
-      out.innerHTML='<p style="color:#2563eb">正在处理第 '+(i+1)+'/'+allFiles.length+' 张：'+f.name+'...</p>';
+      out.innerHTML='<p style="color:#2563eb">Processando '+(i+1)+'/'+allFiles.length+': '+f.name+'...</p>';
       try{
         const elements=await mistralOCR(f);
         const invoices=parseInvoice(elements);
@@ -708,11 +708,11 @@ if(container){
       return '<tr>'+tds+'</tr>';
     }).join('');
     let html='<div class="inv-preview">';
-    html+='<h3>✓ 提取完成</h3>';
-    html+='<p class="pv-tip">成功 '+ok+' 张，失败 '+fail+' 张。请勾选需要导出的字段（默认全选），确认后点击"导出 Excel"。空值显示为 "—"，鼠标悬停可查看完整内容。</p>';
-    html+='<div class="pv-toolbar"><b>发票明细</b>（'+results.length+' 张）<label><input type="checkbox" class="pv-all" checked> 全选</label></div>';
+    html+='<h3>✓ Extração concluída</h3>';
+    html+='<p class="pv-tip">Bem-sucedidas: '+ok+', com falha: '+fail+'. Marque os campos a exportar (todos selecionados por padrão) e clique em "Exportar Excel". Valores vazios aparecem como "—"; passe o mouse para ver o conteúdo completo.</p>';
+    html+='<div class="pv-toolbar"><b>Faturas</b> ('+results.length+')<label><input type="checkbox" class="pv-all" checked> Selecionar tudo</label></div>';
     html+='<div class="pv-tablewrap"><table class="pv-table"><thead><tr>'+ths+'</tr></thead><tbody>'+trs+'</tbody></table></div>';
-    html+='<div class="pv-actions"><button class="pv-export" id="pvExport">导出 Excel</button><span class="pv-count" id="pvCount"></span></div>';
+    html+='<div class="pv-actions"><button class="pv-export" id="pvExport">Exportar Excel</button><span class="pv-count" id="pvCount"></span></div>';
     html+='</div>';
     out.innerHTML=html;
     const allChk=out.querySelector('.pv-all');
@@ -733,9 +733,9 @@ if(container){
     if(exportBtn){
       exportBtn.addEventListener('click',()=>{
         const selected=new Set([...out.querySelectorAll('.pv-col')].filter(c=>c.checked).map(c=>c.value));
-        if(selected.size===0){alert('请至少勾选一个字段');return}
+        if(selected.size===0){alert('Selecione pelo menos um campo');return}
         generateExcel(pvResults,selected);
-        exportBtn.disabled=true;exportBtn.textContent='✓ Excel 已下载';exportBtn.style.opacity=.6;
+        exportBtn.disabled=true;exportBtn.textContent='✓ Excel baixado';exportBtn.style.opacity=.6;
       });
     }
     updatePvCount();
@@ -744,7 +744,7 @@ if(container){
       const total=out.querySelectorAll('.pv-col').length;
       const sel=out.querySelectorAll('.pv-col:checked').length;
       const el=out.querySelector('#pvCount');
-      if(el)el.textContent='已选 '+sel+' / '+total+' 个字段';
+      if(el)el.textContent='Selecionados '+sel+' / '+total+' campos';
     }
   }
 
@@ -752,7 +752,7 @@ if(container){
   fi.onchange=()=>{
     invoiceFiles=[...fi.files];
     let count=invoiceFiles.length;
-    fl.textContent=count>1?count+' arquivos':(invoiceFiles[0]?.name||'未选择文件');
+    fl.textContent=count>1?count+' arquivos':(invoiceFiles[0]?.name||'Nenhum arquivo selecionado');
     let zipCount=invoiceFiles.filter(f=>f.name.toLowerCase().endsWith('.zip')).length;
     if(zipCount>0){
       listEl.textContent='Contém '+zipCount+' arquivo(s) ZIP, descompactação automática (mais de 50 será bloqueado)';
@@ -760,7 +760,7 @@ if(container){
       listEl.textContent='';
     }
     if(zipCount===0&&count>MAX_INVOICES){
-      listEl.innerHTML='<span style="color:#e53e3e">\u274f 超出限制：每次最多 50 张，当前选择了 '+count+' 张</span>';
+      listEl.innerHTML='<span style="color:#e53e3e">\u274f Limite excedido: máximo de 50 por lote, você selecionou '+count+'</span>';
       runBtn.style.display='none';
     }else{
       runBtn.style.display=count>0?'':'none';
