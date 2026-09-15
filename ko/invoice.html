@@ -623,14 +623,14 @@ if(container){
       }else{allFiles.push(f)}
     }
     if(allFiles.length>MAX_INVOICES){
-      out.innerHTML='<p style="color:#e53e3e;font-weight:600">\u274f 每次最多处理 50 张发票，当前选择了 '+allFiles.length+' 张，请减少文件后重试</p>';
+      out.innerHTML='<p style="color:#e53e3e;font-weight:600">\u274f 한 번에 최대 50장까지 처리할 수 있습니다. 현재 '+allFiles.length+'장 선택되었습니다. 파일 수를 줄인 후 다시 시도하세요</p>';
       return;
     }
     runBtn.disabled=true;
     const results=[];let ok=0,fail=0;
     for(let i=0;i<allFiles.length;i++){
       const f=allFiles[i];
-      out.innerHTML='<p style="color:#2563eb">正在处理第 '+(i+1)+'/'+allFiles.length+' 张：'+f.name+'...</p>';
+      out.innerHTML='<p style="color:#2563eb">처리 중 '+(i+1)+'/'+allFiles.length+': '+f.name+'...</p>';
       try{
         const elements=await mistralOCR(f);
         const invoices=parseInvoice(elements);
@@ -708,11 +708,11 @@ if(container){
       return '<tr>'+tds+'</tr>';
     }).join('');
     let html='<div class="inv-preview">';
-    html+='<h3>✓ 提取完成</h3>';
-    html+='<p class="pv-tip">成功 '+ok+' 张，失败 '+fail+' 张。请勾选需要导出的字段（默认全选），确认后点击"导出 Excel"。空值显示为 "—"，鼠标悬停可查看完整内容。</p>';
-    html+='<div class="pv-toolbar"><b>发票明细</b>（'+results.length+' 张）<label><input type="checkbox" class="pv-all" checked> 全选</label></div>';
+    html+='<h3>✓ 추출 완료</h3>';
+    html+='<p class="pv-tip">성공 '+ok+'장, 실패 '+fail+'장. 내보낼 필드를 선택하고(기본 전체 선택) "Excel 내보내기"를 클릭하세요. 빈 값은 "—"로 표시되며, 마우스를 올리면 전체 내용을 볼 수 있습니다.</p>';
+    html+='<div class="pv-toolbar"><b>인보이스</b> ('+results.length+'장)<label><input type="checkbox" class="pv-all" checked> 전체 선택</label></div>';
     html+='<div class="pv-tablewrap"><table class="pv-table"><thead><tr>'+ths+'</tr></thead><tbody>'+trs+'</tbody></table></div>';
-    html+='<div class="pv-actions"><button class="pv-export" id="pvExport">导出 Excel</button><span class="pv-count" id="pvCount"></span></div>';
+    html+='<div class="pv-actions"><button class="pv-export" id="pvExport">Excel 내보내기</button><span class="pv-count" id="pvCount"></span></div>';
     html+='</div>';
     out.innerHTML=html;
     const allChk=out.querySelector('.pv-all');
@@ -733,9 +733,9 @@ if(container){
     if(exportBtn){
       exportBtn.addEventListener('click',()=>{
         const selected=new Set([...out.querySelectorAll('.pv-col')].filter(c=>c.checked).map(c=>c.value));
-        if(selected.size===0){alert('请至少勾选一个字段');return}
+        if(selected.size===0){alert('최소 하나의 필드를 선택해 주세요');return}
         generateExcel(pvResults,selected);
-        exportBtn.disabled=true;exportBtn.textContent='✓ Excel 已下载';exportBtn.style.opacity=.6;
+        exportBtn.disabled=true;exportBtn.textContent='✓ Excel 다운로드 완료';exportBtn.style.opacity=.6;
       });
     }
     updatePvCount();
@@ -744,7 +744,7 @@ if(container){
       const total=out.querySelectorAll('.pv-col').length;
       const sel=out.querySelectorAll('.pv-col:checked').length;
       const el=out.querySelector('#pvCount');
-      if(el)el.textContent='已选 '+sel+' / '+total+' 个字段';
+      if(el)el.textContent='선택됨 '+sel+' / '+total+' 필드';
     }
   }
 
@@ -752,7 +752,7 @@ if(container){
   fi.onchange=()=>{
     invoiceFiles=[...fi.files];
     let count=invoiceFiles.length;
-    fl.textContent=count>1?count+'개 파일':(invoiceFiles[0]?.name||'未选择文件');
+    fl.textContent=count>1?count+'개 파일':(invoiceFiles[0]?.name||'파일이 선택되지 않았습니다');
     let zipCount=invoiceFiles.filter(f=>f.name.toLowerCase().endsWith('.zip')).length;
     if(zipCount>0){
       listEl.textContent=''+zipCount+'개 압축 파일 포함, 자동 압축 해제 후 파일 수 계산 (해제 후 50매 초과 시 차단)';
@@ -760,7 +760,7 @@ if(container){
       listEl.textContent='';
     }
     if(zipCount===0&&count>MAX_INVOICES){
-      listEl.innerHTML='<span style="color:#e53e3e">\u274f 超出限制：每次最多 50 张，当前选择了 '+count+' 张</span>';
+      listEl.innerHTML='<span style="color:#e53e3e">\u274f 제한 초과: 한 번에 최대 50장, 현재 '+count+'장 선택</span>';
       runBtn.style.display='none';
     }else{
       runBtn.style.display=count>0?'':'none';
