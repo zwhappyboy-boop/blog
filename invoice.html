@@ -629,44 +629,57 @@ if(container){
   }
 
   function generateExcel(results){
-    // 统一列设计：核心字段 + 税务字段 + 国家扩展字段
-    const headers=[
-      '序号','文件名','国家','发票号码','开票日期','销售方名称','购买方名称',
-      '销售方税号','购买方税号','币种','不含税金额','税额','价税合计',
-      '付款状态','到期日',
-      '税种','税率','税额明细',
-      '发票代码','校验码','机器编号','收款人','复核人','开票人',
-      '销售方地址电话','购买方地址电话','销售方开户行及账号','购买方开户行及账号',
-      '价税合计(大写)',
-      'PO号码','付款条件','付款方式','银行名称','SWIFT/BIC','IBAN','账号',
-      '商品描述','折扣','运费','提取状态'
-    ];
+    // 按国家分表：国内发票(CN)与中国税务字段表头；国外发票用国际字段表头
+    const cnResults=results.filter(r=>r.country==='CN');
+    const intlResults=results.filter(r=>r.country!=='CN');
 
-    const rows=results.map((r,i)=>{
-      const c=r.core||{},cs=r.country_specific||{};
-      const taxInfo=(r.taxes||[]).map(t=>t.type).join('; ')||'';
-      const taxRates=(r.taxes||[]).map(t=>t.rate?(t.rate*100).toFixed(2)+'%':'').join('; ')||'';
-      const taxAmounts=(r.taxes||[]).map(t=>t.amount||'').join('; ')||'';
-      return [
-        i+1,r.fileName||'',r.country||'',
-        c.invoice_number||'',c.invoice_date||'',c.seller_name||'',c.buyer_name||'',
-        c.seller_tax_id||'',c.buyer_tax_id||'',c.currency||'',c.subtotal||'',c.tax_amount||'',c.total_amount||'',
-        c.payment_status||'',c.due_date||'',
-        taxInfo,taxRates,taxAmounts,
-        cs.invoice_code||'',cs.check_code||'',cs.machine_number||'',cs.payee||'',cs.reviewer||'',cs.drawer||'',
-        cs.seller_address||'',cs.buyer_address||'',cs.seller_bank||'',cs.buyer_bank||'',
-        cs.amount_words||'',
-        cs.po_number||'',cs.payment_terms||'',cs.payment_method||'',cs.bank_name||'',cs.swift_bic||'',cs.iban||'',cs.account_number||'',
-        cs.item_description||'',cs.discount||'',cs.freight||'',r.status||'OK'
-      ];
-    });
+    const cnHeaders=['序号','文件名','发票号码','开票日期','销售方名称','购买方名称','销售方税号','购买方税号','币种','不含税金额','税额','价税合计','付款状态','税种','税率','税额明细','发票代码','校验码','机器编号','收款人','复核人','开票人','销售方地址电话','购买方地址电话','销售方开户行及账号','购买方开户行及账号','价税合计(大写)','提取状态'];
+    const intlHeaders=['序号','文件名','国家','发票号码','开票日期','销售方名称','购买方名称','销售方税号','购买方税号','币种','不含税金额','税额','价税合计','付款状态','到期日','税种','税率','税额明细','PO号码','付款条件','付款方式','银行名称','SWIFT/BIC','IBAN','账号','商品描述','折扣','运费','提取状态'];
+
+    const buildRows=(list,kind)=>{
+      return list.map((r,idx)=>{
+        const c=r.core||{},cs=r.country_specific||{};
+        const taxInfo=(r.taxes||[]).map(t=>t.type).join('; ')||'';
+        const taxRates=(r.taxes||[]).map(t=>t.rate?(t.rate*100).toFixed(2)+'%':'').join('; ')||'';
+        const taxAmounts=(r.taxes||[]).map(t=>t.amount||'').join('; ')||'';
+        if(kind==='cn'){
+          return [
+            idx+1,r.fileName||'',
+            c.invoice_number||'',c.invoice_date||'',c.seller_name||'',c.buyer_name||'',
+            c.seller_tax_id||'',c.buyer_tax_id||'',c.currency||'',c.subtotal||'',c.tax_amount||'',c.total_amount||'',
+            c.payment_status||'',
+            taxInfo,taxRates,taxAmounts,
+            cs.invoice_code||'',cs.check_code||'',cs.machine_number||'',
+            cs.payee||'',cs.reviewer||'',cs.drawer||'',
+            cs.seller_address||'',cs.buyer_address||'',
+            cs.seller_bank||'',cs.buyer_bank||'',
+            cs.amount_words||'',
+            r.status||'OK'
+          ];
+        }
+        return [
+          idx+1,r.fileName||'',r.country||'',
+          c.invoice_number||'',c.invoice_date||'',c.seller_name||'',c.buyer_name||'',
+          c.seller_tax_id||'',c.buyer_tax_id||'',c.currency||'',c.subtotal||'',c.tax_amount||'',c.total_amount||'',
+          c.payment_status||'',c.due_date||'',
+          taxInfo,taxRates,taxAmounts,
+          cs.po_number||'',cs.payment_terms||'',cs.payment_method||'',
+          cs.bank_name||'',cs.swift_bic||'',cs.iban||'',cs.account_number||'',
+          cs.item_description||'',cs.discount||'',cs.freight||'',
+          r.status||'OK'
+        ];
+      });
+    };
 
     if(window.XLSX){
       const wb=XLSX.utils.book_new();
-      const ws=XLSX.utils.aoa_to_sheet([headers,...rows]);
-      // 设置列宽
-      ws['!cols']=headers.map(h=>({wch:Math.max(h.length*2,12)}));
-      XLSX.utils.book_append_sheet(wb,ws,'发票统计');
+      const addSheet=(headers,rows,sheetName)=>{
+        const ws=XLSX.utils.aoa_to_sheet([headers,...rows]);
+        ws['!cols']=headers.map(hh=>({wch:Math.max(hh.length*2,12)}));
+        XLSX.utils.book_append_sheet(wb,ws,sheetName);
+      };
+      if(cnResults.length>0)addSheet(cnHeaders,buildRows(cnResults,'cn'),'国内发票');
+      if(intlResults.length>0)addSheet(intlHeaders,buildRows(intlResults,'intl'),'国外发票');
       const arr=XLSX.write(wb,{type:'array',bookType:'xlsx'});
       const blob=new Blob([arr],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
       const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='invoices_output.xlsx';a.click();
