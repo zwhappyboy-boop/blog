@@ -19,6 +19,26 @@
 .inv-schema{background:#f0f5ff;border:1px solid #d7dee9;border-radius:10px;padding:12px 16px;margin:12px 0;font-size:13px;color:#42506b;line-height:1.7}
 .inv-schema b{color:#2563eb}
 body.dark .inv-notice{background:#171d28;border-color:#303846;color:#aebad0}body.dark .inv-filelabel{background:#171d28;border-color:#303846;color:#c7d2e4}body.dark .inv-filelabel:hover{background:#1a2230;border-color:#3b82f6}body.dark .inv-schema{background:#171d28;border-color:#303846;color:#aebad0}
+
+.inv-preview{margin-top:16px;background:#fafbfd;border:1px solid #d7dee9;border-radius:12px;padding:14px 16px}
+.inv-preview h3{margin:0 0 4px;font-size:15px;color:#2563eb}
+.inv-preview .pv-tip{font-size:12px;color:#728095;margin-bottom:10px}
+.pv-toolbar{display:flex;align-items:center;gap:10px;margin:10px 0 8px;flex-wrap:wrap}
+.pv-toolbar label{font-size:13px;color:#33415e;display:flex;align-items:center;gap:5px;cursor:pointer}
+.pv-actions{margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pv-export{padding:10px 24px;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;background:#2563eb;color:#fff}
+.pv-export:hover{opacity:.88}
+.pv-count{font-size:13px;color:#728095}
+.pv-tablewrap{overflow-x:auto;border:1px solid #e2e8f0;border-radius:10px}
+.pv-table{border-collapse:collapse;width:100%;font-size:12px}
+.pv-table th,.pv-table td{border:1px solid #e8edf3;padding:6px 8px;white-space:nowrap;max-width:260px;overflow:hidden;text-overflow:ellipsis}
+.pv-table th{background:#f0f5ff;color:#33415e;font-weight:600;position:sticky;top:0}
+.pv-table th .colchk{display:flex;align-items:center;gap:4px;font-weight:600;cursor:pointer}
+.pv-table td{color:#33415e}
+.pv-table td.empty{color:#c3ccd9;text-align:center}
+.pv-table td.err{color:#e53e3e}
+body.dark .inv-preview{background:#171d28;border-color:#303846}body.dark .pv-tablewrap{border-color:#303846}body.dark .pv-table th{background:#1a2230;color:#c7d2e4}body.dark .pv-table th,body.dark .pv-table td{border-color:#303846}body.dark .pv-table td{color:#c7d2e4}body.dark .pv-table td.empty{color:#4a5468}body.dark .pv-toolbar label,body.dark .pv-count{color:#aebad0}
+
 </style></head><body>
 <script>(function(s){s.dataset.zone='11774159',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 <header><b id="brand" onclick="location.href='../index.html'">🧰 <span data-t="brand">Boîte à Outils Universelle</span></b><nav id="navmenus"></nav><div class="navright"><label class="langlabel" for="lang" data-t="langLabel">Langue</label>
@@ -621,70 +641,113 @@ if(container){
         fail++;
       }
     }
-    // 生成 Excel
-    out.innerHTML='<p style="color:#2563eb">正在生成 Excel...</p>';
-    generateExcel(results);
-    out.innerHTML='<p style="color:#38a169;font-weight:600">\u2713 提取完成！成功 '+ok+' 张，失败 '+fail+' 张，Excel 已下载</p>';
-    runBtn.disabled=false;
+    // 展示字段选择预览，由用户勾选后导出
+    showPreview(results,ok,fail);
   }
 
-  function generateExcel(results){
-    // 按国家分表：国内发票(CN)与中国税务字段表头；国外发票用国际字段表头
-    const cnResults=results.filter(r=>r.country==='CN');
-    const intlResults=results.filter(r=>r.country!=='CN');
 
-    const cnHeaders=["N°","Fichier","Numéro de facture","Date émission","Vendeur","Acheteur","ID fiscal vendeur","ID fiscal acheteur","Devise","Sous-total","Montant TVA","Total","Statut paiement","Type TVA","Taux TVA","Détail TVA","Code facture","Code vérification","Nº machine","Encaisseur","Réviseur","Émetteur","Adresse/Tél vendeur","Adresse/Tél acheteur","Banque/Compte vendeur","Banque/Compte acheteur","Total (lettres)","Statut"];
-    const intlHeaders=["N°","Fichier","Pays","Numéro de facture","Date émission","Vendeur","Acheteur","ID fiscal vendeur","ID fiscal acheteur","Devise","Sous-total","Montant TVA","Total","Statut paiement","Échéance","Type TVA","Taux TVA","Détail TVA","Nº bon","Conditions paiement","Mode paiement","Banque","SWIFT/BIC","IBAN","Nº compte","Description articles","Remise","Fret","Statut"];
 
-    const buildRows=(list,kind)=>{
-      return list.map((r,idx)=>{
-        const c=r.core||{},cs=r.country_specific||{};
-        const taxInfo=(r.taxes||[]).map(t=>t.type).join('; ')||'';
-        const taxRates=(r.taxes||[]).map(t=>t.rate?(t.rate*100).toFixed(2)+'%':'').join('; ')||'';
-        const taxAmounts=(r.taxes||[]).map(t=>t.amount||'').join('; ')||'';
-        if(kind==='cn'){
-          return [
-            idx+1,r.fileName||'',
-            c.invoice_number||'',c.invoice_date||'',c.seller_name||'',c.buyer_name||'',
-            c.seller_tax_id||'',c.buyer_tax_id||'',c.currency||'',c.subtotal||'',c.tax_amount||'',c.total_amount||'',
-            c.payment_status||'',
-            taxInfo,taxRates,taxAmounts,
-            cs.invoice_code||'',cs.check_code||'',cs.machine_number||'',
-            cs.payee||'',cs.reviewer||'',cs.drawer||'',
-            cs.seller_address||'',cs.buyer_address||'',
-            cs.seller_bank||'',cs.buyer_bank||'',
-            cs.amount_words||'',
-            r.status||'OK'
-          ];
-        }
-        return [
-          idx+1,r.fileName||'',r.country||'',
-          c.invoice_number||'',c.invoice_date||'',c.seller_name||'',c.buyer_name||'',
-          c.seller_tax_id||'',c.buyer_tax_id||'',c.currency||'',c.subtotal||'',c.tax_amount||'',c.total_amount||'',
-          c.payment_status||'',c.due_date||'',
-          taxInfo,taxRates,taxAmounts,
-          cs.po_number||'',cs.payment_terms||'',cs.payment_method||'',
-          cs.bank_name||'',cs.swift_bic||'',cs.iban||'',cs.account_number||'',
-          cs.item_description||'',cs.discount||'',cs.freight||'',
-          r.status||'OK'
-        ];
-      });
-    };
+  // 统一字段表头：国内外发票共用一张表，按用户勾选的字段导出
+  const INV_HEADERS=["N°","Fichier","Pays","Numéro de facture","Date émission","Vendeur","Acheteur","ID fiscal vendeur","ID fiscal acheteur","Devise","Sous-total","Montant TVA","Total","Statut paiement","Échéance","Type TVA","Taux TVA","Détail TVA","Code facture","Code vérification","Nº machine","Encaisseur","Réviseur","Émetteur","Adresse/Tél vendeur","Adresse/Tél acheteur","Banque/Compte vendeur","Banque/Compte acheteur","Total (lettres)","Nº bon","Conditions paiement","Mode paiement","Banque","SWIFT/BIC","IBAN","Nº compte","Description articles","Remise","Fret","Statut"];
+  const buildFullRow=(r,idx)=>{
+    const c=r.core||{},cs=r.country_specific||{};
+    const taxInfo=(r.taxes||[]).map(t=>t.type).join('; ')||'';
+    const taxRates=(r.taxes||[]).map(t=>t.rate?(t.rate*100).toFixed(2)+'%':'').join('; ')||'';
+    const taxAmounts=(r.taxes||[]).map(t=>t.amount||'').join('; ')||'';
+    return [
+      idx+1,r.fileName||'',r.country||'',
+      c.invoice_number||'',c.invoice_date||'',c.seller_name||'',c.buyer_name||'',
+      c.seller_tax_id||'',c.buyer_tax_id||'',c.currency||'',c.subtotal||'',c.tax_amount||'',c.total_amount||'',
+      c.payment_status||'',c.due_date||'',
+      taxInfo,taxRates,taxAmounts,
+      cs.invoice_code||'',cs.check_code||'',cs.machine_number||'',
+      cs.payee||'',cs.reviewer||'',cs.drawer||'',
+      cs.seller_address||'',cs.buyer_address||'',
+      cs.seller_bank||'',cs.buyer_bank||'',
+      cs.amount_words||'',
+      cs.po_number||'',cs.payment_terms||'',cs.payment_method||'',
+      cs.bank_name||'',cs.swift_bic||'',cs.iban||'',cs.account_number||'',
+      cs.item_description||'',cs.discount||'',cs.freight||'',
+      r.status||'OK'
+    ];
+  };
 
+  function generateExcel(results,selectedCols){
+    // 单表导出：全部发票统一字段，只导出用户勾选的列
+    const keep=selectedCols?INV_HEADERS.filter(h=>selectedCols.has(h)):INV_HEADERS;
+    if(keep.length===0)return;
+    const rows=results.map((r,idx)=>{
+      const full=buildFullRow(r,idx);
+      return keep.map(h=>full[INV_HEADERS.indexOf(h)]);
+    });
     if(window.XLSX){
       const wb=XLSX.utils.book_new();
-      const addSheet=(headers,rows,sheetName)=>{
-        const ws=XLSX.utils.aoa_to_sheet([headers,...rows]);
-        ws['!cols']=headers.map(hh=>({wch:Math.max(hh.length*2,12)}));
-        XLSX.utils.book_append_sheet(wb,ws,sheetName);
-      };
-      if(cnResults.length>0)addSheet(cnHeaders,buildRows(cnResults,'cn'),'Factures CN');
-      if(intlResults.length>0)addSheet(intlHeaders,buildRows(intlResults,'intl'),'Factures Intl');
+      const ws=XLSX.utils.aoa_to_sheet([keep,...rows]);
+      ws['!cols']=keep.map(hh=>({wch:Math.max(hh.length*2,12)}));
+      XLSX.utils.book_append_sheet(wb,ws,'Factures');
       const arr=XLSX.write(wb,{type:'array',bookType:'xlsx'});
       const blob=new Blob([arr],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
       const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='invoices_output.xlsx';a.click();
     }
   }
+
+  // 字段选择预览：提取完成后展示，勾选需要导出的列
+  let pvResults=null;
+  function showPreview(results,ok,fail){
+    pvResults=results;
+    const esc=(s)=>String(s==null?'':s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    const ths=INV_HEADERS.map(h=>'<th><label class="colchk"><input type="checkbox" class="pv-col" value="'+esc(h)+'" checked> '+esc(h)+'</label></th>').join('');
+    const trs=results.map((r,idx)=>{
+      const full=buildFullRow(r,idx);
+      const tds=full.map((v,i)=>{
+        const isErr=i===INV_HEADERS.length-1&&v&&String(v).indexOf('ERROR')===0;
+        const cls=(v==null||v==='')?'empty':(isErr?'err':'');
+        const txt=(v==null||v==='')?'—':esc(v);
+        return '<td class="'+cls+'" title="'+txt+'">'+txt+'</td>';
+      }).join('');
+      return '<tr>'+tds+'</tr>';
+    }).join('');
+    let html='<div class="inv-preview">';
+    html+='<h3>✓ 提取完成</h3>';
+    html+='<p class="pv-tip">成功 '+ok+' 张，失败 '+fail+' 张。请勾选需要导出的字段（默认全选），确认后点击"导出 Excel"。空值显示为 "—"，鼠标悬停可查看完整内容。</p>';
+    html+='<div class="pv-toolbar"><b>发票明细</b>（'+results.length+' 张）<label><input type="checkbox" class="pv-all" checked> 全选</label></div>';
+    html+='<div class="pv-tablewrap"><table class="pv-table"><thead><tr>'+ths+'</tr></thead><tbody>'+trs+'</tbody></table></div>';
+    html+='<div class="pv-actions"><button class="pv-export" id="pvExport">导出 Excel</button><span class="pv-count" id="pvCount"></span></div>';
+    html+='</div>';
+    out.innerHTML=html;
+    const allChk=out.querySelector('.pv-all');
+    if(allChk){
+      allChk.addEventListener('change',()=>{
+        out.querySelectorAll('.pv-col').forEach(c=>{c.checked=allChk.checked});
+        updatePvCount();
+      });
+    }
+    out.querySelectorAll('.pv-col').forEach(cb=>{
+      cb.addEventListener('change',()=>{
+        const a2=out.querySelector('.pv-all');
+        if(a2)a2.checked=[...out.querySelectorAll('.pv-col')].every(c=>c.checked);
+        updatePvCount();
+      });
+    });
+    const exportBtn=out.querySelector('#pvExport');
+    if(exportBtn){
+      exportBtn.addEventListener('click',()=>{
+        const selected=new Set([...out.querySelectorAll('.pv-col')].filter(c=>c.checked).map(c=>c.value));
+        if(selected.size===0){alert('请至少勾选一个字段');return}
+        generateExcel(pvResults,selected);
+        exportBtn.disabled=true;exportBtn.textContent='✓ Excel 已下载';exportBtn.style.opacity=.6;
+      });
+    }
+    updatePvCount();
+    runBtn.disabled=false;
+    function updatePvCount(){
+      const total=out.querySelectorAll('.pv-col').length;
+      const sel=out.querySelectorAll('.pv-col:checked').length;
+      const el=out.querySelector('#pvCount');
+      if(el)el.textContent='已选 '+sel+' / '+total+' 个字段';
+    }
+  }
+
 
   fi.onchange=()=>{
     invoiceFiles=[...fi.files];
