@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-CN"><head>
+﻿<!doctype html><html lang="zh-CN"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="PDF转Excel：浏览器本地提取PDF表格生成xlsx文件，不上传服务器 · 万能工具箱">
 <link rel="canonical" href="https://zhouyixuan.com/pdf2excel.html">
@@ -157,7 +157,7 @@ runBtn.onclick=async()=>{
   try{
     pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
     const buf=await curFile.arrayBuffer();
-    const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+    const pdf=await pdfjsLib.getDocument({data:buf,cMapUrl:'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/cmaps/',cMapPacked:true,standardFontDataUrl:'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/standard_fonts/'}).promise;
     const sheets=[];
     for(let i=1;i<=pdf.numPages;i++){
       if(cancelled)return;
