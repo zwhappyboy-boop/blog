@@ -1,7 +1,7 @@
 ﻿<!doctype html><html lang="es"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="PDF a Imagen: renderizar páginas PDF como PNG/JPG en el navegador, descarga ZIP, sin carga · All-in-One Toolbox">
-<link rel="canonical" href="">
+<link rel="canonical" href="https://zhouyixuan.com/pdf2img.html">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8950518028405500" crossorigin="anonymous"></script><script async src="https://www.googletagmanager.com/gtag/js?id=G-1GK46TTPQC"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-1GK46TTPQC');</script>
 <title>PDF a Imagen - All-in-One Toolbox</title><link rel="stylesheet" href="../style.css">
 <style>
@@ -187,7 +187,7 @@ runBtn.onclick=async()=>{
   try{
     pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
     const buf=await curFile.arrayBuffer();
-    const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+    const pdf=await pdfjsLib.getDocument({data:buf,cMapUrl:'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/cmaps/',cMapPacked:true,standardFontDataUrl:'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/standard_fonts/'}).promise;
     const numPages=pdf.numPages;
     const format=formatSel.value;
     const scale=parseFloat(scaleRange.value);
