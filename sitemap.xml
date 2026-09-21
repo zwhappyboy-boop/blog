@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://zhouyixuan.com/en/index.html</loc>
@@ -66,7 +66,9 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com/en/pdfsplit.html</loc></url><url><loc>https://zhouyixuan.com/en/pdfcompress.html</loc>
+    <loc>https://zhouyixuan.com/en/pdfsplit.html</loc><lastmod>2026-09-20</lastmod>
+    </url>
+  <url><loc>https://zhouyixuan.com/en/pdfcompress.html</loc>
     <lastmod>2026-09-14</lastmod>
     <priority>0.8</priority>
   </url>
@@ -251,7 +253,9 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com/pdfsplit.html</loc></url><url><loc>https://zhouyixuan.com/pdfcompress.html</loc>
+    <loc>https://zhouyixuan.com/pdfsplit.html</loc><lastmod>2026-09-20</lastmod>
+    </url>
+  <url><loc>https://zhouyixuan.com/pdfcompress.html</loc>
     <lastmod>2026-09-14</lastmod>
     <priority>0.8</priority>
   </url>
@@ -436,7 +440,9 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com/ja/pdfsplit.html</loc></url><url><loc>https://zhouyixuan.com/ja/pdfcompress.html</loc>
+    <loc>https://zhouyixuan.com/ja/pdfsplit.html</loc><lastmod>2026-09-20</lastmod>
+    </url>
+  <url><loc>https://zhouyixuan.com/ja/pdfcompress.html</loc>
     <lastmod>2026-09-14</lastmod>
     <priority>0.8</priority>
   </url>
@@ -621,7 +627,9 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com/ko/pdfsplit.html</loc></url><url><loc>https://zhouyixuan.com/ko/pdfcompress.html</loc>
+    <loc>https://zhouyixuan.com/ko/pdfsplit.html</loc><lastmod>2026-09-20</lastmod>
+    </url>
+  <url><loc>https://zhouyixuan.com/ko/pdfcompress.html</loc>
     <lastmod>2026-09-14</lastmod>
     <priority>0.8</priority>
   </url>
@@ -806,7 +814,9 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com/es/pdfsplit.html</loc></url><url><loc>https://zhouyixuan.com/es/pdfcompress.html</loc>
+    <loc>https://zhouyixuan.com/es/pdfsplit.html</loc><lastmod>2026-09-20</lastmod>
+    </url>
+  <url><loc>https://zhouyixuan.com/es/pdfcompress.html</loc>
     <lastmod>2026-09-14</lastmod>
     <priority>0.8</priority>
   </url>
@@ -991,7 +1001,9 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com/fr/pdfsplit.html</loc></url><url><loc>https://zhouyixuan.com/fr/pdfcompress.html</loc>
+    <loc>https://zhouyixuan.com/fr/pdfsplit.html</loc><lastmod>2026-09-20</lastmod>
+    </url>
+  <url><loc>https://zhouyixuan.com/fr/pdfcompress.html</loc>
     <lastmod>2026-09-14</lastmod>
     <priority>0.8</priority>
   </url>
@@ -1176,7 +1188,9 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com/de/pdfsplit.html</loc></url><url><loc>https://zhouyixuan.com/de/pdfcompress.html</loc>
+    <loc>https://zhouyixuan.com/de/pdfsplit.html</loc><lastmod>2026-09-20</lastmod>
+    </url>
+  <url><loc>https://zhouyixuan.com/de/pdfcompress.html</loc>
     <lastmod>2026-09-14</lastmod>
     <priority>0.8</priority>
   </url>
@@ -1361,7 +1375,9 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://zhouyixuan.com/pt/pdfsplit.html</loc></url><url><loc>https://zhouyixuan.com/pt/pdfcompress.html</loc>
+    <loc>https://zhouyixuan.com/pt/pdfsplit.html</loc><lastmod>2026-09-20</lastmod>
+    </url>
+  <url><loc>https://zhouyixuan.com/pt/pdfcompress.html</loc>
     <lastmod>2026-09-14</lastmod>
     <priority>0.8</priority>
   </url>
@@ -1729,121 +1745,145 @@
 <url><loc>https://zhouyixuan.com/de/videocompress.html</loc><lastmod>2026-09-20</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
 <url><loc>https://zhouyixuan.com/pt/videocompress.html</loc><lastmod>2026-09-20</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>  <url>
     <loc>https://zhouyixuan.com/pdf2img.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://zhouyixuan.com/en/pdf2img.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://zhouyixuan.com/ja/pdf2img.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://zhouyixuan.com/ko/pdf2img.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://zhouyixuan.com/es/pdf2img.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://zhouyixuan.com/fr/pdf2img.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://zhouyixuan.com/de/pdf2img.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://zhouyixuan.com/pt/pdf2img.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://zhouyixuan.com/pdf2excel.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://zhouyixuan.com/en/pdf2excel.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://zhouyixuan.com/ja/pdf2excel.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://zhouyixuan.com/ko/pdf2excel.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://zhouyixuan.com/es/pdf2excel.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://zhouyixuan.com/fr/pdf2excel.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://zhouyixuan.com/de/pdf2excel.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://zhouyixuan.com/pt/pdf2excel.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://zhouyixuan.com/videogif.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://zhouyixuan.com/en/videogif.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://zhouyixuan.com/ja/videogif.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://zhouyixuan.com/ko/videogif.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://zhouyixuan.com/es/videogif.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://zhouyixuan.com/fr/videogif.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://zhouyixuan.com/de/videogif.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://zhouyixuan.com/pt/videogif.html</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
