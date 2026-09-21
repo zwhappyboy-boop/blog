@@ -1,7 +1,7 @@
 ﻿<!doctype html><html lang="fr"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="PDF vers Image: rendre les pages PDF en PNG/JPG dans le navigateur, téléchargement ZIP, sans envoi · All-in-One Toolbox">
-<link rel="canonical" href="https://zhouyixuan.com/pdf2img.html">
+<link rel="canonical" href="">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8950518028405500" crossorigin="anonymous"></script><script async src="https://www.googletagmanager.com/gtag/js?id=G-1GK46TTPQC"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-1GK46TTPQC');</script>
 <title>PDF vers Image - All-in-One Toolbox</title><link rel="stylesheet" href="../style.css">
 <style>
@@ -277,7 +277,9 @@ dlAllBtn.onclick=async()=>{
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
   a.download=base+'_images.zip';
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
   setTimeout(()=>URL.revokeObjectURL(a.href),10000);
 };
 
