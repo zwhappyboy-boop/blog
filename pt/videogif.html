@@ -125,7 +125,6 @@ body.dark .vg-result-stats{background:#1a2230;color:#c7d2e4}
 </div>
 
 <footer>© 2026 All-in-One Online Tools · <a href="#" data-page="privacy" data-t="privacy">隐私政策</a> · <a href="#" data-page="terms" data-t="terms">服务条款</a> · <a href="#" data-page="contact" data-t="contact">联系我们</a></footer><div id="modal" class="modal"><div class="box"><button id="close">×</button><h2 id="mt"></h2><p id="md"></p><div id="mb"></div></div></div>
-<script src="https://cdn.jsdelivr.net/npm/gifenc@1.0.3/dist/gifenc.min.js"></script>
 <script src="../script.js?v=20260920c"></script>
 <script>
 (function(){
@@ -283,10 +282,17 @@ async function makeGif(file){
   const totalFrames=Math.max(1,Math.round((endTime-startTime)*fps));
   const frameDur=Math.round(1000/fps); // ms
 
-  // gifenc GIF encoder
-  const gif=new GIFEncoder();
-  gif.writeHeader();
-  gif.writeLogicalScreenInfo(w,h);
+  // gifenc GIF encoder (dynamic ESM import)
+  let gifenc;
+  try{
+    gifenc=await import('https://cdn.jsdelivr.net/npm/gifenc@1.0.3/dist/gifenc.esm.min.js');
+  }catch(e){
+    document.body.removeChild(vid);
+    URL.revokeObjectURL(url);
+    throw new Error('GIF encoder library failed to load. Please check your network connection and retry.');
+  }
+  const { GIFEncoder, quantize, applyPalette } = gifenc;
+  const gif = GIFEncoder();
 
   const canvas=document.createElement('canvas');
   canvas.width=w;canvas.height=h;
@@ -327,7 +333,7 @@ async function makeGif(file){
   }
 
   // palette for quantization (gifenc built-in)
-  let firstFrame=true;
+  let palette=null;
   for(let i=0;i<totalFrames;i++){
     if(cancelled)throw new Error('cancelled');
     const ts=startTime+i/fps;
@@ -336,17 +342,14 @@ async function makeGif(file){
     ctx.fillRect(0,0,w,h);
     ctx.drawImage(vid,0,0,w,h);
     const imageData=ctx.getImageData(0,0,w,h);
-    // gifenc: writeFrame(indexed_data, width, height, opts)
     const rgba=new Uint8Array(imageData.data.buffer);
-    // Apply palette quantization on first frame, reuse for subsequent
-    const opts={transparent:false,palette:undefined,delay:frameDur,dispose:2};
-    if(firstFrame){
-      // First frame: auto palette via gifenc quantize
-      gif.writeFrame(rgba,w,h,{delay:frameDur,dispose:2,first:true});
-      firstFrame=false;
-    }else{
-      gif.writeFrame(rgba,w,h,{delay:frameDur,dispose:2,first:false});
+    if(!palette){
+      // First frame: quantize colors to build global palette
+      palette=quantize(rgba,256);
     }
+    // Apply palette to get indexed bitmap, then write frame
+    const index=applyPalette(rgba,palette);
+    gif.writeFrame(index,w,h,{palette,delay:frameDur,dispose:-1});
     const prog=3+Math.round((i+1)/totalFrames*90);
     setProgress(prog);
     if(i%5===0)setStatus((tr('extracting','Extracting frame {n}/{total}...')).replace('{n}',i+1).replace('{total}',totalFrames));
