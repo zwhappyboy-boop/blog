@@ -266,8 +266,8 @@ document.getElementById('piLightbox').onclick=function(e){
 };
 
 dlAllBtn.onclick=async()=>{
-  if(!renderedImages.length||!window.JSZIP)return;
-  const zip=new JSZIP();
+  if(!renderedImages.length||!window.JSZip)return;
+  const zip=new JSZip();
   const base=curFile.name.replace(/\.pdf$/i,'');
   for(const img of renderedImages){
     const b64=img.dataUrl.split(',')[1];
