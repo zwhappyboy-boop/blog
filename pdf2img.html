@@ -187,7 +187,7 @@ runBtn.onclick=async()=>{
   try{
     pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
     const buf=await curFile.arrayBuffer();
-    const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+    const pdf=await pdfjsLib.getDocument({data:buf,cMapUrl:'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/cmaps/',cMapPacked:true,standardFontDataUrl:'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/standard_fonts/'}).promise;
     const numPages=pdf.numPages;
     const format=formatSel.value;
     const scale=parseFloat(scaleRange.value);
