@@ -219,9 +219,11 @@ async function compress(file){
   const {VideoEncoder,VideoFrame}=window;
   const {Muxer,ArrayBufferTarget}=window.Mp4Muxer;
 
-  // 1. load video metadata
+  // 1. load video metadata — must attach to DOM for seek/frame callbacks to fire
   const video=document.createElement('video');
-  video.muted=true;video.playsInline=true;
+  video.muted=true;video.playsInline=true;video.preload='auto';
+  video.style.cssText='position:fixed;top:-9999px;left:-9999px;width:2px;height:2px;opacity:0;pointer-events:none';
+  document.body.appendChild(video);
   const url=URL.createObjectURL(file);
   video.src=url;
   await new Promise((res,rej)=>{
@@ -229,6 +231,13 @@ async function compress(file){
     video.onerror=()=>rej(new Error('video load error'));
     setTimeout(()=>rej(new Error('video load timeout')),15000);
   });
+  // wait for decoder ready (readyState>=2 = HAVE_CURRENT_DATA)
+  if(video.readyState<2){
+    await new Promise((res)=>{
+      video.addEventListener('canplay',res,{once:true});
+      setTimeout(res,3000);
+    });
+  }
 
   const srcW=video.videoWidth||640,srcH=video.videoHeight||360;
   const dur=video.duration||0;
@@ -300,7 +309,8 @@ async function compress(file){
       const onSeeked=()=>{
         // wait a tick for the frame to be painted
         if('requestVideoFrameCallback' in video){
-          video.requestVideoFrameCallback(()=>setTimeout(ok,10));
+          video.requestVideoFrameCallback(()=>{if(!done)ok()});
+          setTimeout(ok,300);
         }else{
           setTimeout(ok,50);
         }
@@ -308,9 +318,24 @@ async function compress(file){
       const onErr=()=>fail(new Error('seek error'));
       video.addEventListener('seeked',onSeeked);
       video.addEventListener('error',onErr);
-      try{video.currentTime=ts}catch(e){fail(e)}
-      setTimeout(()=>fail(new Error('seek timeout')),5000);
+      try{
+        if(Math.abs(video.currentTime-ts)<0.001){ok();return}
+        video.currentTime=ts;
+      }catch(e){fail(e)}
+      setTimeout(()=>fail(new Error('seek timeout')),15000);
     });
+  }
+
+  async function robustSeekTo(ts){
+    try{
+      await seekTo(ts);
+    }catch(e){
+      if(e.message==='seek timeout'||e.message==='seek error'){
+        await sleep(200);
+        await seekTo(Math.max(0,ts-0.1));
+        if(Math.abs(video.currentTime-ts)>0.05)await seekTo(ts);
+      }else throw e;
+    }
   }
 
   const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -318,7 +343,7 @@ async function compress(file){
   for(let i=0;i<frames;i++){
     if(cancelled)throw new Error('cancelled');
     const ts=i/fps;
-    await seekTo(ts);
+    await robustSeekTo(ts);
     ctx.drawImage(video,0,0,w,h);
     const vf=new VideoFrame(canvas,{timestamp:Math.round(i*frameDur),duration:frameDur});
     vEnc.encode(vf,{keyFrame:i%30===0});
@@ -345,6 +370,7 @@ async function compress(file){
   // 9. finalize
   muxer.finalize();
   URL.revokeObjectURL(url);
+  document.body.removeChild(video);
 
   const outBuf=target.buffer;
   if(!outBuf||outBuf.byteLength===0)throw new Error('Output buffer is empty');
