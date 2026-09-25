@@ -654,11 +654,11 @@ function extractRawInvoice(els){
     for(const row of rows){
       let handled=false;
       for(const c of row){
-        let m=c.match(/(?:金额|价税)合计（?大写）?\s*(.+)/);
+        let m=c.match(/(?:金额|价税)合计[（(]大写[）)]\s*(?=\S)(.+)/);
         if(m){push(prefixed('金额合计（大写）'),m[1].trim());handled=true;continue;}
         m=c.match(/（?小写）?\s*[￥¥]\s*([\d,.]+)/);
         if(m&&!handled){push(prefixed('金额合计（小写）'),'￥'+m[1].trim());handled=true;continue;}
-        m=c.match(/（小写）\s*(.+)/);
+        m=c.match(/（小写）\s*(?=\S)(.+)/);
         if(m){push(prefixed('金额合计（小写）'),m[1].trim());handled=true;continue;}
       }
       if(handled)continue;
