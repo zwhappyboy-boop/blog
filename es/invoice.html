@@ -652,14 +652,22 @@ function extractRawInvoice(els){
   function extractTable(t){
     const rows=tableToRows(t);const items=[];
     for(const row of rows){
-      let handled=false;
+      let handled=false,smallHit=false;
+      const rowAmtLbl=/价税合计|金额合计|大写/.test(row.join(' '));
       for(const c of row){
-        let m=c.match(/(?:金额|价税)合计[（(]大写[）)]\s*(?=\S)(.+)/);
-        if(m){push(prefixed('金额合计（大写）'),m[1].trim());handled=true;continue;}
+        let m=c.match(/(?:金额|价税)合计[（(]大写[）)]\s*(?=\S)(.+?)(?:\s*[（(]小写[）)]|$)/);
+        if(m){push(prefixed('金额合计（大写）'),m[1].trim());handled=true;}
+        else if(rowAmtLbl&&(m=c.match(/([零壹贰叁肆伍陆柒捌玖拾佰仟万亿圆元整角分]{3,}[整圆元角分])/))){push(prefixed('金额合计（大写）'),m[1].trim());handled=true;}
         m=c.match(/（?小写）?\s*[￥¥]\s*([\d,.]+)/);
-        if(m&&!handled){push(prefixed('金额合计（小写）'),'￥'+m[1].trim());handled=true;continue;}
+        if(m){push(prefixed('金额合计（小写）'),'￥'+m[1].trim());handled=true;smallHit=true;continue;}
         m=c.match(/（小写）\s*(?=\S)(.+)/);
-        if(m){push(prefixed('金额合计（小写）'),m[1].trim());handled=true;continue;}
+        if(m){push(prefixed('金额合计（小写）'),m[1].trim());handled=true;smallHit=true;continue;}
+      }
+      if(handled&&rowAmtLbl&&!smallHit){
+        const jr=row.join(' ');
+        let sm=jr.match(/[（(]小写[）)]\s*[￥¥]?\s*([\d,.]+)/);
+        if(!sm)sm=jr.match(/[￥¥]\s*([\d,.]+)/);
+        if(sm)push(prefixed('金额合计（小写）'),'￥'+sm[1].trim());
       }
       if(handled)continue;
       // 合计行：提取合计金额和税额
