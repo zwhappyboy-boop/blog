@@ -654,12 +654,20 @@ function extractRawInvoice(els){
     for(const row of rows){
       let handled=false;
       for(const c of row){
-        let m=c.match(/金额合计（大写）(.+)/);
+        let m=c.match(/(?:金额|价税)合计（?大写）?\s*(.+)/);
         if(m){push(prefixed('金额合计（大写）'),m[1].trim());handled=true;continue;}
+        m=c.match(/（?小写）?\s*[￥¥]\s*([\d,.]+)/);
+        if(m&&!handled){push(prefixed('金额合计（小写）'),'￥'+m[1].trim());handled=true;continue;}
         m=c.match(/（小写）\s*(.+)/);
-        if(m){push(prefixed('金额合计（小写）'),m[1].trim());handled=true;}
+        if(m){push(prefixed('金额合计（小写）'),m[1].trim());handled=true;continue;}
       }
       if(handled)continue;
+      // 合计行：提取合计金额和税额
+      if(row.some(c=>/^合计$/.test(c.trim()))){
+        const nums=row.filter(c=>/[￥¥]?[\d,.]+/.test(c)&&c.trim()&&!/^合计$/.test(c.trim()));
+        if(nums.length>=1)push(prefixed('合计金额'),nums.map(n=>n.trim()).join(' / '));
+        continue;
+      }
       // 含冒号的单元格 → 作为"标签：值"行解析
       if(row.some(c=>/[：:]/.test(c))){
         parseSeg(row.join(' '));
