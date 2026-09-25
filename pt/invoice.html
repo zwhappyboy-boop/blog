@@ -687,7 +687,11 @@ function extractRawInvoice(els){
 }
 
 /* ========== API 函数 ========== */
-async function mistralOCR(file){let fd=new FormData();fd.append('file',file,file.name);let r=await fetch(WORKER_URL+'/api/mistral/ocr',{method:'POST',body:fd});let d=await r.json();if(!r.ok||!d.elements)throw new Error(d.error||'OCR failed');return d.elements}
+/* OCR 级联：LlamaParse（新主力）→ Mistral（内置 Gemini 降级） */
+async function invoiceOCR(file){
+  try{const fd1=new FormData();fd1.append('file',file,file.name);const r1=await fetch(WORKER_URL+'/api/llamaparse/ocr',{method:'POST',body:fd1});const d1=await r1.json();if(r1.ok&&d1.elements&&d1.elements.length) return d1.elements;}catch(e){}
+  const fd=new FormData();fd.append('file',file,file.name);const r=await fetch(WORKER_URL+'/api/mistral/ocr',{method:'POST',body:fd});const d=await r.json();if(!r.ok||!d.elements) throw new Error(d.error||'OCR failed');return d.elements;
+}
 
 /* ========== 主流程 ========== */
 let invoiceFiles=[];
@@ -727,7 +731,7 @@ if(container){
       const f=allFiles[i];
       out.innerHTML='<p style="color:#2563eb">Processando '+(i+1)+'/'+allFiles.length+': '+f.name+'...</p>';
       try{
-        const elements=await mistralOCR(f);
+        const elements=await invoiceOCR(f);
         const inv=extractRawInvoice(elements);
         inv.fileName=f.name;inv.status='OK';results.push(inv);
         ok++;
