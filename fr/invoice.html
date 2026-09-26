@@ -64,7 +64,7 @@ body.dark .inv-preview{background:#171d28;border-color:#303846}body.dark .pv-tab
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
 <script>window.pageLang="fr"</script>
-<script src="../script.js?v=20260920c"></script>
+<script src="../script.js?v=20260926a"></script>
 <script>
 (function(){
 const WORKER_URL="https://api.zhouyixuan.com";
@@ -75,6 +75,7 @@ const IMG_EXTS=['.png','.jpg','.jpeg','.gif','.bmp','.tiff','.tif','.webp'];
 const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const FALSE_SWIFTS=['TRANSFER','PAYMENT','INVOICE','REMITTANCE','INCLUDED','CROSS','BORDER'];
 
+function T(){return window.__tt?window.__tt():e.en}
 /* ========== 通用工具函数 ========== */
 function extractSWIFT(text){const c=text.match(/\b([A-Z]{4}[A-Z]{2}[A-Z0-9]{2}(?:[A-Z0-9]{3})?)\b/g)||[];for(const x of c){if(!FALSE_SWIFTS.includes(x))return x}return''}
 function isAmountValue(t){return/^[$\u20ac\u00a3\u00a5]?\s*[\d,]+\.\d+$/.test(t)||t==='Included'||/^[$\u20ac\u00a3\u00a5]?\s*0\.00$/.test(t)}
@@ -764,7 +765,7 @@ if(container){
 
 
   // ===== 动态字段：扫描结果实际出现的字段罗列为列（不预设固定表头）=====
-    const BASE_LBL={no:(e[o]||e.en).lblNo||"序号",file:(e[o]||e.en).lblFile||"文件名",country:(e[o]||e.en).lblCountry||"国家",status:(e[o]||e.en).lblStatus||"提取状态",tax:(e[o]||e.en).lblTaxDetail||"税额明细"};
+    const BASE_LBL={no:T().lblNo||"序号",file:T().lblFile||"文件名",country:T().lblCountry||"国家",status:T().lblStatus||"提取状态",tax:T().lblTaxDetail||"税额明细"};
   function collectFields(items){
     const present=[];
     items.forEach(r=>{
@@ -773,7 +774,7 @@ if(container){
     });
     return present;
   }
-  function fieldLabel(k){var t=e[o]||e.en;var cnMap={'其他文本':'lblOtherText','票据类型':'lblItemType','商品明细':'lblItems','税额明细':'lblTaxDetail','金额（大写）':'lblAmountWords','金额（小写）':'lblAmountNum','税额':'lblTaxDetail'};if(cnMap[k]&&t[cnMap[k]])return t[cnMap[k]];if(t[k])return t[k];return k}
+  function fieldLabel(k){var t=T();var cnMap={'其他文本':'lblOtherText','票据类型':'lblItemType','商品明细':'lblItems','税额明细':'lblTaxDetail','金额（大写）':'lblAmountWords','金额（小写）':'lblAmountNum','税额':'lblTaxDetail'};if(cnMap[k]&&t[cnMap[k]])return t[cnMap[k]];if(t[k])return t[k];return k}
   function fieldValue(r,k){
     const rf=r.rawFields||{};
     return rf[k]!==undefined?rf[k]:'';
@@ -832,7 +833,7 @@ if(container){
     html+='<p class="pv-tip">'+('Réussies : '+ok+', échouées : '+fail+'. Voici les résultats du scan, seuls les champs réellement présents sont listés. Cochez les champs à exporter (tous sélectionnés par défaut) puis cliquez sur « Exporter Excel ». Les valeurs vides apparaissent en « — » ; survolez pour voir le contenu complet.')+'</p>';
     html+='<div class="pv-toolbar">'+('<b>Factures</b> ('+results.length+')<label><input type="checkbox" class="pv-all" checked> Tout sélectionner</label>')+'</div>';
     html+='<div class="pv-tablewrap"><table class="pv-table"><thead><tr>'+ths+'</tr></thead><tbody>'+trs+'</tbody></table></div>';
-    html+='<div class="pv-actions"><button class="pv-export" id="pvExport">'+((e[o]||e.en).invExport||'Export')+'</button><span class="pv-count" id="pvCount"></span></div>';
+    html+='<div class="pv-actions"><button class="pv-export" id="pvExport">'+(T().invExport||'Export')+'</button><span class="pv-count" id="pvCount"></span></div>';
     html+='</div>';
     out.innerHTML=html;
     const allChk=out.querySelector('.pv-all');

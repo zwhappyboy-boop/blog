@@ -64,7 +64,7 @@ body.dark .inv-preview{background:#171d28;border-color:#303846}body.dark .pv-tab
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
 <script>window.pageLang="zh-CN"</script>
-<script src="script.js?v=20260920c"></script>
+<script src="script.js?v=20260926a"></script>
 <script>
 (function(){
 const WORKER_URL="https://api.zhouyixuan.com";
@@ -75,6 +75,7 @@ const IMG_EXTS=['.png','.jpg','.jpeg','.gif','.bmp','.tiff','.tif','.webp'];
 const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const FALSE_SWIFTS=['TRANSFER','PAYMENT','INVOICE','REMITTANCE','INCLUDED','CROSS','BORDER'];
 
+function T(){return window.__tt?window.__tt():e.en}
 /* ========== 通用工具函数 ========== */
 function extractSWIFT(text){const c=text.match(/\b([A-Z]{4}[A-Z]{2}[A-Z0-9]{2}(?:[A-Z0-9]{3})?)\b/g)||[];for(const x of c){if(!FALSE_SWIFTS.includes(x))return x}return''}
 function isAmountValue(t){return/^[$\u20ac\u00a3\u00a5]?\s*[\d,]+\.\d+$/.test(t)||t==='Included'||/^[$\u20ac\u00a3\u00a5]?\s*0\.00$/.test(t)}
@@ -773,7 +774,7 @@ if(container){
     });
     return present;
   }
-  function fieldLabel(k){var t=e[o]||e.en;var cnMap={'其他文本':'lblOtherText','票据类型':'lblItemType','商品明细':'lblItems','税额明细':'lblTaxDetail','金额（大写）':'lblAmountWords','金额（小写）':'lblAmountNum','税额':'lblTaxDetail'};if(cnMap[k]&&t[cnMap[k]])return t[cnMap[k]];if(t[k])return t[k];return k}
+  function fieldLabel(k){var t=T();var cnMap={'其他文本':'lblOtherText','票据类型':'lblItemType','商品明细':'lblItems','税额明细':'lblTaxDetail','金额（大写）':'lblAmountWords','金额（小写）':'lblAmountNum','税额':'lblTaxDetail'};if(cnMap[k]&&t[cnMap[k]])return t[cnMap[k]];if(t[k])return t[k];return k}
   function fieldValue(r,k){
     const rf=r.rawFields||{};
     return rf[k]!==undefined?rf[k]:'';
@@ -828,11 +829,11 @@ if(container){
       return '<tr>'+tds+'</tr>';
     }).join('');
     let html='<div class="inv-preview">';
-    html+='<h3>'+(e[o]||e.en).invDoneTitle||'✓'+'</h3>';
-    html+='<p class="pv-tip">'+(((e[o]||e.en).invDoneTip||"").replace(/{ok}/g,ok).replace(/{fail}/g,fail))+'</p>';
-    html+='<div class="pv-toolbar">'+('<b>'+(e[o]||e.en).invInvoiceDetail+'</b>（'+results.length+' '+(e[o]||e.en).invDetailUnit+'）<label><input type="checkbox" class="pv-all" checked> '+(e[o]||e.en).invSelectAll+'</label>')+'</div>';
+    html+='<h3>'+T().invDoneTitle||'✓'+'</h3>';
+    html+='<p class="pv-tip">'+((T().invDoneTip||"").replace(/{ok}/g,ok).replace(/{fail}/g,fail))+'</p>';
+    html+='<div class="pv-toolbar">'+('<b>'+T().invInvoiceDetail+'</b>（'+results.length+' '+T().invDetailUnit+'）<label><input type="checkbox" class="pv-all" checked> '+T().invSelectAll+'</label>')+'</div>';
     html+='<div class="pv-tablewrap"><table class="pv-table"><thead><tr>'+ths+'</tr></thead><tbody>'+trs+'</tbody></table></div>';
-    html+='<div class="pv-actions"><button class="pv-export" id="pvExport">'+((e[o]||e.en).invExport||'Export')+'</button><span class="pv-count" id="pvCount"></span></div>';
+    html+='<div class="pv-actions"><button class="pv-export" id="pvExport">'+(T().invExport||'Export')+'</button><span class="pv-count" id="pvCount"></span></div>';
     html+='</div>';
     out.innerHTML=html;
     const allChk=out.querySelector('.pv-all');
@@ -853,7 +854,7 @@ if(container){
     if(exportBtn){
       exportBtn.addEventListener('click',()=>{
         const selected=new Set([...out.querySelectorAll('.pv-col')].filter(c=>c.checked).map(c=>c.value));
-        if(selected.size===0){alert((e[o]||e.en).invSelectWarn||'Please select');return}
+        if(selected.size===0){alert(T().invSelectWarn||'Please select');return}
         generateExcel(pvResults,selected);
         exportBtn.disabled=true;exportBtn.textContent='✓ Excel 已下载';exportBtn.style.opacity=.6;
       });
@@ -864,7 +865,7 @@ if(container){
       const total=out.querySelectorAll('.pv-col').length;
       const sel=out.querySelectorAll('.pv-col:checked').length;
       const el=out.querySelector('#pvCount');
-      if(el)(el.textContent=((e[o]||e.en).invSelectedCount||'').replace(/{sel}/g,sel).replace(/{total}/g,total));
+      if(el)(el.textContent=(T().invSelectedCount||'').replace(/{sel}/g,sel).replace(/{total}/g,total));
     }
   }
 
