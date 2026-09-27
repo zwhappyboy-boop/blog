@@ -1,4 +1,4 @@
-﻿<!doctype html><html lang="zh-CN"><head>
+<!doctype html><html lang="zh-CN"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="批量提取全球发票信息并输出 Excel · 万能工具箱">
 <link rel="canonical" href="https://zhouyixuan.com/invoice.html">
@@ -64,7 +64,7 @@ body.dark .inv-preview{background:#171d28;border-color:#303846}body.dark .pv-tab
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
 <script>window.pageLang="zh-CN"</script>
-<script src="script.js?v=20260926a"></script>
+<script src="script.js?v=20260926c"></script>
 <script>
 (function(){
 const WORKER_URL="https://api.zhouyixuan.com";
@@ -653,24 +653,24 @@ function extractRawInvoice(els){
   function extractTable(t){
     const rows=tableToRows(t);const items=[];
     for(const row of rows){
-      let handled=false,smallHit=false;
-      const rowAmtLbl=/价税合计|金额合计|大写/.test(row.join(' '));
-      for(const c of row){
-        let m=c.match(/(?:金额|价税)合计[（(]大写[）)]\s*(?=\S)(.+?)(?:\s*[（(]小写[）)]|$)/);
-        if(m){push(prefixed('金额合计（大写）'),m[1].trim());handled=true;}
-        else if(rowAmtLbl&&(m=c.match(/([零壹贰叁肆伍陆柒捌玖拾佰仟万亿圆元整角分]{3,}[整圆元角分])/))){push(prefixed('金额合计（大写）'),m[1].trim());handled=true;}
-        m=c.match(/（?小写）?\s*[￥¥]\s*([\d,.]+)/);
-        if(m){push(prefixed('金额合计（小写）'),'￥'+m[1].trim());handled=true;smallHit=true;continue;}
-        m=c.match(/（小写）\s*(?=\S)(.+)/);
-        if(m){push(prefixed('金额合计（小写）'),m[1].trim());handled=true;smallHit=true;continue;}
-      }
-      if(handled&&rowAmtLbl&&!smallHit){
-        const jr=row.join(' ');
-        let sm=jr.match(/[（(]小写[）)]\s*[￥¥]?\s*([\d,.]+)/);
-        if(!sm)sm=jr.match(/[￥¥]\s*([\d,.]+)/);
-        if(sm)push(prefixed('金额合计（小写）'),'￥'+sm[1].trim());
-      }
-      if(handled)continue;
+    let handled=false,smallHit=false;
+    const rowAmtLbl=/价税合计|金额合计|大写/.test(row.join(' '));
+    for(const c of row){
+      let m=c.match(/(?:金额|价税)合计[（(]大写[）)]\s*(?=\S)(.+?)(?:\s*[（(]小写[）)]|$)/);
+      if(m){push(prefixed('金额合计（大写）'),m[1].trim());handled=true;}
+      else if(rowAmtLbl&&(m=c.match(/([零壹贰叁肆伍陆柒捌玖拾佰仟万亿圆元整角分]{3,}[整圆元角分])/))){push(prefixed('金额合计（大写）'),m[1].trim());handled=true;}
+      m=c.match(/（?小写）?\s*[￥¥]\s*([\d,.]+)/);
+      if(m){push(prefixed('金额合计（小写）'),'￥'+m[1].trim());handled=true;smallHit=true;continue;}
+      m=c.match(/（小写）\s*(?=\S)(.+)/);
+      if(m){push(prefixed('金额合计（小写）'),m[1].trim());handled=true;smallHit=true;continue;}
+    }
+    if(handled&&rowAmtLbl&&!smallHit){
+      const jr=row.join(' ');
+      let sm=jr.match(/[（(]小写[）)]\s*[￥¥]?\s*([\d,.]+)/);
+      if(!sm)sm=jr.match(/[￥¥]\s*([\d,.]+)/);
+      if(sm)push(prefixed('金额合计（小写）'),'￥'+sm[1].trim());
+    }
+    if(handled)continue;
       // 合计行：提取合计金额和税额
       if(row.some(c=>/^合计$/.test(c.trim()))){
         const nums=row.filter(c=>/[￥¥]?[\d,.]+/.test(c)&&c.trim()&&!/^合计$/.test(c.trim()));
@@ -706,8 +706,19 @@ function extractRawInvoice(els){
 /* ========== API 函数 ========== */
 /* OCR 级联：LlamaParse（新主力）→ Mistral（内置 Gemini 降级） */
 async function invoiceOCR(file){
-  try{const fd1=new FormData();fd1.append('file',file,file.name);const r1=await fetch(WORKER_URL+'/api/llamaparse/ocr',{method:'POST',body:fd1});const d1=await r1.json();if(r1.ok&&d1.elements&&d1.elements.length) return d1.elements;}catch(e){}
-  const fd=new FormData();fd.append('file',file,file.name);const r=await fetch(WORKER_URL+'/api/mistral/ocr',{method:'POST',body:fd});const d=await r.json();if(!r.ok||!d.elements) throw new Error(d.error||'OCR failed');return d.elements;
+  // 第一优先：LlamaParse
+  try{
+    const fd1=new FormData();fd1.append('file',file,file.name);
+    const r1=await fetch(WORKER_URL+'/api/llamaparse/ocr',{method:'POST',body:fd1});
+    const d1=await r1.json();
+    if(r1.ok&&d1.elements&&d1.elements.length) return d1.elements;
+  }catch(e){/* 网络错误，继续降级 */}
+  // 第二优先：Mistral OCR（内置 429→Gemini 降级）
+  const fd=new FormData();fd.append('file',file,file.name);
+  const r=await fetch(WORKER_URL+'/api/mistral/ocr',{method:'POST',body:fd});
+  const d=await r.json();
+  if(!r.ok||!d.elements) throw new Error(d.error||'OCR failed');
+  return d.elements;
 }
 
 /* ========== 主流程 ========== */
@@ -715,6 +726,11 @@ let invoiceFiles=[];
 const container=document.querySelector('#invoice-app');
 if(container){
   const fi=container.querySelector('#invFile');
+  container.querySelector('.inv-filelabel').addEventListener('click',function(e){
+    if(e.target===fi)return;
+    e.preventDefault();e.stopPropagation();
+    fi.click();
+  },true);
   const fl=container.querySelector('.filename');
   const listEl=container.querySelector('#invList');
   const runBtn=container.querySelector('#invRun');
