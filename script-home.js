@@ -21,8 +21,8 @@ const EXT={
   txt:['word','textdiff','textclean','dedup']
 };
 
-// 热门工具
-const POP=['pdf2word','pdfmerge','pdfcompress','heic','compress','cutout','videogif','qr','gpacalc','fancytext','atsresume','word'];
+// 热门工具（用户指定 12 个，2026-09-28）
+const POP=['pdf2word','pdf2ppt','resize','photogrid','xlsxanalyze','invoice','atsresume','batchrename','qr','worldtime','csv2excel','cutout'];
 
 const $=id=>document.getElementById(id);
 let lang=window.pageLang||localStorage.getItem('lang')||navigator.language||'zh-CN';
