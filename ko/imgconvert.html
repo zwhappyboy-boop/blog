@@ -1,0 +1,139 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="이미지 변환">
+<link rel="canonical" href="https://zhouyixuan.com/ko/imgconvert.html">
+<link rel="alternate" hreflang="zh-CN" href="https://zhouyixuan.com/imgconvert.html"><link rel="alternate" hreflang="en" href="https://zhouyixuan.com/en/imgconvert.html"><link rel="alternate" hreflang="ja" href="https://zhouyixuan.com/ja/imgconvert.html"><link rel="alternate" hreflang="ko" href="https://zhouyixuan.com/ko/imgconvert.html"><link rel="alternate" hreflang="es" href="https://zhouyixuan.com/es/imgconvert.html"><link rel="alternate" hreflang="fr" href="https://zhouyixuan.com/fr/imgconvert.html"><link rel="alternate" hreflang="de" href="https://zhouyixuan.com/de/imgconvert.html"><link rel="alternate" hreflang="pt" href="https://zhouyixuan.com/pt/imgconvert.html"><link rel="alternate" hreflang="x-default" href="https://zhouyixuan.com/imgconvert.html">
+<title>이미지 변환 - All-in-One Tools</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+
+#ic-app{max-width:960px;margin:0 auto;padding:20px}
+.ic-zone{display:block;border:2px dashed #c5cdd9;border-radius:16px;padding:40px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:#fafbfd}
+.ic-zone:hover{border-color:#2563eb;background:#f0f5ff}
+.ic-zone.drag{border-color:#2563eb;background:#eef5ff}
+.ic-zone .ic{font-size:48px;display:block;margin-bottom:8px}
+.ic-zone .hint{font-size:14px;color:#42506b;font-weight:600}
+.ic-zone .sub-hint{font-size:12px;color:#728095;margin-top:6px}
+.ic-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0;padding:14px 16px;background:#f0f5ff;border:1px solid #d7dee9;border-radius:14px}
+.ic-bar label{font-size:13px;color:#42506b;font-weight:600;display:flex;align-items:center;gap:6px}
+.ic-bar select{padding:7px 10px;border:1px solid #d7dee9;border-radius:8px;font-size:14px;background:#fff;color:#1c2b45}
+.ic-bar .qrow{display:flex;align-items:center;gap:6px}
+.ic-bar .qrow input{width:100px;accent-color:#2563eb}
+.ic-bar .qval{font-size:12px;color:#728095;min-width:28px}
+.ic-btn{padding:12px 26px;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .15s;background:#2563eb;color:#fff;margin-left:auto}
+.ic-btn:hover{opacity:.88}
+.ic-btn:disabled{opacity:.4;cursor:not-allowed}
+.ic-list{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.ic-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid #e2e7ef;border-radius:10px;background:#fff}
+.ic-item .thumb{width:40px;height:40px;border-radius:6px;object-fit:cover;background:#f0f5ff;flex-shrink:0}
+.ic-item .name{flex:1;font-size:13px;color:#42506b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ic-item .meta{font-size:11px;color:#728095;flex-shrink:0}
+.ic-item .del{cursor:pointer;color:#c0392b;font-weight:700;flex-shrink:0;padding:0 4px;font-size:14px}
+.ic-item .del:hover{color:#e74c3c}
+.ic-note{font-size:11px;color:#728095;line-height:1.6;margin-top:10px}
+body.dark .ic-zone{background:#171d28;border-color:#303846}
+body.dark .ic-zone:hover{background:#1a2230;border-color:#3b82f6}
+body.dark .ic-zone .hint{color:#c7d2e4}
+body.dark .ic-bar{background:#171d28;border-color:#303846}
+body.dark .ic-bar label{color:#aebad0}
+body.dark .ic-bar select{background:#11151f;border-color:#303846;color:#dbe4f2}
+body.dark .ic-item{background:#11151f;border-color:#303846}
+body.dark .ic-item .name{color:#c7d2e4}
+body.dark .ic-item .meta{color:#8b98b0}
+body.dark .ic-note{color:#8b98b0}
+</style></head><body>
+<script>document.addEventListener('click',function l(){document.removeEventListener('click',l);var s=document.createElement('script');s.dataset.zone='11774159';s.src='https://nap5k.com/tag.min.js';document.body.appendChild(s)},{once:true})</script>
+
+<header><b id="brand" onclick="location.href='../index.html'" data-href="index.html">🧰 <span data-t="brand">万能工具箱</span></b><nav id="navmenus"></nav><div class="navright"><label class="langlabel" for="lang" data-t="langLabel">语言选择</label>
+<select id="lang"><option value="zh-CN" selected>中文</option><option value="en">English</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option></select><button id="theme">🌙</button></div></header>
+<section class="hero"><small data-t="eyebrow">免费 · 快速 · 隐私优先</small><h1 data-t="icTitle">이미지 변환</h1><p data-t="icDesc">WebP / AVIF / SVG / PNG / JPG 等格式互转，批量处理，全部在浏览器本地完成</p></section>
+
+<div id="ic">
+  <label class="ic-zone" id="icDrop" for="icFile">
+    <span class="ic">🔄</span>
+    <span class="hint" data-t="icDrop">点击选择图片</span>
+    <span class="sub-hint" data-t="icDropSub">支持批量，或拖入页面任意位置</span>
+    <input id="icFile" type="file" accept="image/*" multiple style="display:none">
+  </label>
+  <div class="ic-bar">
+    <label data-t="icFormat">目标格式</label>
+    <select id="icFormat">
+      <option value="png">PNG</option>
+      <option value="jpeg">JPG</option>
+      <option value="webp" selected>WebP</option>
+      <option value="avif">AVIF</option>
+      <option value="svg">SVG（仅位图转矢量描边）</option>
+    </select>
+    <label data-t="icQuality">质量</label>
+    <span class="qrow"><input type="range" id="icQuality" min="50" max="100" value="90"><span class="qval" id="icQualityVal">90</span></span>
+    <button class="ic-btn" id="icRun" data-t="icRun">批量转换</button>
+  </div>
+  <div class="ic-list" id="icList"></div>
+  <div class="ic-note" data-t="icNote">• 全部在浏览器本地处理，图片不上传服务器。SVG 转换会将位图转为单色轮廓线稿（适合图标/Logo），AVIF 需要新版浏览器支持。</div>
+</div>
+<footer>© 2026 All-in-One Online Tools · <a href="#" data-page="privacy" data-t="privacy">隐私政策</a> · <a href="#" data-page="terms" data-t="terms">服务条款</a> · <a href="#" data-page="contact" data-t="contact">联系我们</a></footer>
+<div id="modal" class="modal"><div class="box"><button id="close">×</button><h2 id="mt"></h2><p id="md"></p><div id="mb"></div></div></div>
+<script>window.pageLang="ko";window.autoTool="imgconvert"</script>
+<script src="../script.js?v=20260928d"></script>
+<script>
+!function(){"use strict";
+const t={"zh-CN":{icTitle:"图片格式转换",icDesc:"WebP / AVIF / SVG / PNG / JPG 等格式互转，批量处理，纯本地处理图片不上传",icDrop:"点击选择图片",icDropSub:"支持批量，或拖入页面任意位置",icFormat:"目标格式",icQuality:"质量",icRun:"批量转换",icNote:"• 全部在浏览器本地处理，图片不上传任何服务器\n• SVG 转换会将位图转为单色轮廓线稿，适合图标/Logo\n• AVIF 与部分格式需要较新浏览器支持",icNoFile:"请先选择图片",icDone:"转换完成",icErr:"处理失败",icDel:"删除",icImg:"图片",icProcessing:"正在处理…"},
+en:{icTitle:"Image Format Converter",icDesc:"Convert between WebP / AVIF / SVG / PNG / JPG. Batch processing, 100% local",icDrop:"Click to select images",icDropSub:"Multi-select or drag & drop anywhere",icFormat:"Target Format",icQuality:"Quality",icRun:"Convert",icDone:"Done",icNoFile:"Please select images first",icErr:"Failed",icDel:"Delete",icImg:"Image",icProcessing:"Processing…",icNote:"• All processing is local; nothing is uploaded\n• SVG output converts a bitmap into a monochrome outline (best for icons/logo)\n• AVIF/WebP require a modern browser"},
+ja:{icTitle:"画像フォーマット変換",icDrop:"画像を選択",icDropSub:"複数選択またはドラッグ&ドロップ",icFormat:"変換先",icQuality:"品質",icRun:"変換",icNoFile:"画像を選択してください",icDone:"完了",icErr:"失敗",icDel:"削除",icImg:"画像",icProcessing:"処理中…"},
+ko:{icTitle:"이미지 변환",icDrop:"이미지 선택",icDropSub:"다중 선택 또는 드래그 앤 드롭",icFormat:"변환 형식",icQuality:"품질",icRun:"변환",icNoFile:"이미지를 먼저 선택하세요",icErr:"변환 실패",icDel:"삭제",icImg:"이미지",icProcessing:"처리 중…"},
+es:{icTitle:"Conversor de imágenes",icDrop:"Seleccionar imágenes",icDropSub:"Multiselección o arrastrar",icFormat:"Formato",icQuality:"Calidad",icRun:"Convertir",icNoFile:"Selecciona una imagen primero",icErr:"Error",icDel:"Eliminar",icImg:"Imagen",icProcessing:"Procesando…"},
+fr:{icTitle:"Convertisseur d'images",icDrop:"Choisir des images",icDropSub:"Sélection multiple ou glisser-déposer",icFormat:"Format",icQuality:"Qualité",icRun:"Convertir",icNoFile:"Sélectionnez d'abord une image",icErr:"Échec",icDel:"Supprimer",icImg:"Image",icProcessing:"Traitement…"},
+de:{icTitle:"Bildkonverter",icDrop:"Bilder auswählen",icDropSub:"Mehrfachauswahl oder Drag & Drop",icFormat:"Format",icQuality:"Qualität",icRun:"Konvertieren",icNoFile:"Bitte zuerst ein Bild wählen",icErr:"Fehler",icDel:"Löschen",icImg:"Bild",icProcessing:"Verarbeitung…"},
+pt:{icTitle:"Conversor de Imagens",icDrop:"Selecionar imagens",icDropSub:"Seleção múltipla ou arrastar",icFormat:"Formato",icQuality:"Qualidade",icRun:"Converter",icNoFile:"Selecione uma imagem primeiro",icErr:"Falha",icDel:"Excluir",icImg:"Imagem",icProcessing:"Processando…"}};
+let lang=window.pageLang||"zh-CN";const $=s=>document.querySelector(s);const T=k=>(t[lang]&&t[lang][k])||t.en[k]||k;
+const files=[];
+const drop=$("#icDrop"),fileInput=$("#icFile"),fmtSel=$("#icFormat"),qual=$("#icQuality"),qualVal=$("#icQualityVal"),list=$("#icList"),runBtn=$("#icRun");
+qual.addEventListener("input",()=>qualVal.textContent=qual.value);
+function addFiles(fl){for(const f of fl){if(!f.type.startsWith("image/"))continue;files.push({file:f,status:"ready"});}render();}
+function render(){list.innerHTML="";files.forEach((it,i)=>{const d=document.createElement("div");d.className="ic-item";const img=document.createElement("img");img.className="thumb";img.src=URL.createObjectURL(it.file);const name=document.createElement("span");name.className="name";name.textContent=it.file.name;const meta=document.createElement("span");meta.className="meta";meta.textContent=it.status==="done"?T("icDone"):it.status==="error"?T("icErr"):it.status==="processing"?T("icProcessing"):formatSize(it.file.size);const del=document.createElement("span");del.className="del";del.textContent="×";del.onclick=()=>{URL.revokeObjectURL(img.src);files.splice(i,1);render();};d.append(img,name,meta,del);list.appendChild(d);});runBtn.disabled=!files.length;}
+function formatSize(b){if(b<1024)return b+" B";if(b<1048576)return (b/1024).toFixed(1)+" KB";return (b/1048576).toFixed(2)+" MB";}
+drop.addEventListener("click",()=>fileInput.click());
+drop.addEventListener("dragover",e=>{e.preventDefault();drop.classList.add("drag");});
+drop.addEventListener("dragleave",()=>drop.classList.remove("drag"));
+drop.addEventListener("drop",e=>{e.preventDefault();drop.classList.remove("drag");if(e.dataTransfer.files.length)formatFiles(e.dataTransfer.files);});
+fileInput.addEventListener("change",()=>{if(fileInput.files.length)formatFiles(fileInput.files);fileInput.value="";});
+function formatFiles(fl){files.length=0;[...fl].forEach(f=>files.push({file:f,status:"idle"}));render();}
+// 转换核心
+async function convertImage(file,target,quality){
+  if(target==="svg"){
+    // 位图转 SVG：转灰度，用 canvas 生成 path 轮廓（简化：输出单色描边）
+    const bmp=await createImageBitmap(file);
+    const c=document.createElement("canvas");c.width=bmp.width;c.height=bmp.height;
+    const ctx=c.getContext("2d");ctx.drawImage(bmp,0,0);
+    const img=ctx.getImageData(0,0,c.width,c.height);
+    // 简单阈值：生成轮廓 path（非常粗略的描边，避免文件过大）
+    let d="",step=Math.max(1,Math.round(Math.max(c.width,c.height)/160));
+    for(let y=0;y<c.height;y+=step){for(let x=0;x<c.width;x+=step){const i=(y*c.width+x)*4;const lum=(img.data[i]+img.data[i+1]+img.data[i+2])/3;if(lum<128){d+="M"+x+" "+y+"h"+step+"v"+step+"h-"+step+"z";}}}
+    const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+c.width+'" height="'+c.height+'" viewBox="0 0 '+c.width+' '+c.height+'"><path d="'+d+'" fill="#000"/></svg>';
+    return new Blob([svg],{type:"image/svg+xml"});
+  }
+  const bmp=await createImageBitmap(file);
+  const c=document.createElement("canvas");c.width=bmp.width;c.height=bmp.height;
+  const ctx=c.getContext("2d");ctx.drawImage(bmp,0,0);
+  // 透明背景转 JPG 时填充白底
+  if(target==="jpeg"){ctx.globalCompositeOperation="destination-over";ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);}
+  const typeMap={png:"image/png",jpeg:"image/jpeg",webp:"image/webp",avif:"image/avif"};
+  const mime=typeMap[target];
+  if(target==="png")return await new Promise(r=>c.toBlob(r,mime));
+  const ext=target==="jpeg"?"jpg":target;
+  const blob=await new Promise(r=>c.toBlob(r,mime,quality/100));
+  return blob;
+}
+runBtn.addEventListener("click",async()=>{
+  if(!files.length)return alert(T("icNoFile"));
+  const target=fmtSel.value;const q=parseInt(qual.value);
+  runBtn.disabled=true;runBtn.textContent=T("icProcessing");
+  for(let i=0;i<files.length;i++){const it=files[i];it.status="processing";render();
+    try{const blob=await convertImage(it.file,target,q);const a=document.createElement("a");const ext=target==="jpeg"?"jpg":target;a.href=URL.createObjectURL(blob);a.download=it.file.name.replace(/\.[^.]+$/,"")+"."+ext;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),3000);it.status="done";}catch(err){console.error(err);it.status="error";}
+    render();}
+  runBtn.disabled=false;runBtn.textContent=T("icRun");
+});
+// 多语言切换由 script.js 的 F() 处理，但我们要保证自己的按钮文案正确
+setTimeout(()=>{document.querySelectorAll("[data-t]").forEach(el=>{const k=el.dataset.t;const v=T(k);if(v&&k!=="brand"&&k!=="langLabel")el.textContent=v;});},50);
+}();
+</script></body></html>

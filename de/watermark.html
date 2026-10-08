@@ -1,0 +1,212 @@
+<!doctype html><html lang="de"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Wasserzeichen">
+<link rel="canonical" href="https://zhouyixuan.com/de/watermark.html">
+<link rel="alternate" hreflang="zh-CN" href="https://zhouyixuan.com/watermark.html"><link rel="alternate" hreflang="en" href="https://zhouyixuan.com/en/watermark.html"><link rel="alternate" hreflang="ja" href="https://zhouyixuan.com/ja/watermark.html"><link rel="alternate" hreflang="ko" href="https://zhouyixuan.com/ko/watermark.html"><link rel="alternate" hreflang="es" href="https://zhouyixuan.com/es/watermark.html"><link rel="alternate" hreflang="fr" href="https://zhouyixuan.com/fr/watermark.html"><link rel="alternate" hreflang="de" href="https://zhouyixuan.com/de/watermark.html"><link rel="alternate" hreflang="pt" href="https://zhouyixuan.com/pt/watermark.html"><link rel="alternate" hreflang="x-default" href="https://zhouyixuan.com/watermark.html">
+<title>Wasserzeichen - All-in-One Tools</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+
+#wm-app{max-width:960px;margin:0 auto;padding:20px}
+.wm-layout{display:grid;grid-template-columns:1fr 280px;gap:16px}
+@media(max-width:900px){.wm-layout{grid-template-columns:1fr}}
+.wm-panel{background:#fafbfd;border:1px solid #d7dee9;border-radius:14px;padding:14px;min-width:0}
+.wm-panel h3{font-size:14px;color:#33415e;margin:0 0 10px;font-weight:700}
+.wm-zone{display:block;border:2px dashed #c5cdd9;border-radius:12px;padding:24px 12px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:#fff}
+.wm-zone:hover{border-color:#2563eb;background:#f0f5ff}
+.wm-zone.drag{border-color:#2563eb;background:#eef5ff}
+.wm-zone .ic{font-size:36px;display:block;margin-bottom:6px}
+.wm-zone .hint{font-size:13px;color:#42506b;font-weight:600}
+.wm-zone .sub-hint{font-size:12px;color:#728095;margin-top:4px}
+.wm-prev{position:relative;display:flex;align-items:center;justify-content:center;min-height:360px;background:repeating-conic-gradient(#f0f2f7 0 25%,#fff 0 50%) 50%/22px 22px;border:1px solid #e2e7ef;border-radius:14px;overflow:hidden}
+.wm-prev img{max-width:100%;max-height:480px;object-fit:contain;display:block}
+.wm-prev .ph{color:#728095;font-size:14px;text-align:center;padding:40px 20px;line-height:1.8}
+.wm-prev .ph b{display:block;font-size:16px;color:#42506b;margin-bottom:6px}
+.wm-sec{margin-bottom:14px}
+.wm-sec:last-child{margin-bottom:0}
+.wm-sec-title{font-size:12px;color:#42506b;font-weight:700;margin:0 0 8px}
+.wm-seg{display:flex;flex-wrap:wrap;gap:6px}
+.wm-seg button{padding:6px 10px;border:1px solid #d7dee9;border-radius:8px;background:#fff;color:#3a4a68;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+.wm-seg button:hover{border-color:#2563eb;color:#2563eb}
+.wm-seg button.active{background:#2563eb;border-color:#2563eb;color:#fff}
+.wm-input{width:100%;padding:7px 10px;border:1px solid #d7dee9;border-radius:8px;font-size:13px;background:#fff;color:#1c2b45;box-sizing:border-box;margin-top:6px}
+.wm-row{display:flex;align-items:center;gap:8px;margin:6px 0}
+.wm-row label{font-size:12px;color:#728095;flex-shrink:0}
+.wm-row input[type=range]{flex:1;accent-color:#2563eb}
+.wm-row .val{font-size:12px;color:#728095;min-width:32px;text-align:right}
+.wm-row input[type=color]{width:36px;height:28px;border:1px solid #d7dee9;border-radius:6px;padding:2px;background:#fff;cursor:pointer}
+.wm-upload-btn{display:block;width:100%;padding:8px 0;border:1px dashed #2563eb;border-radius:8px;background:#f0f5ff;color:#2563eb;font-size:12px;font-weight:600;cursor:pointer;text-align:center;margin-top:6px}
+.wm-upload-btn:hover{background:#e0ebff}
+.wm-btn{display:block;width:100%;padding:12px 0;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .15s;background:#2563eb;color:#fff;margin-top:12px}
+.wm-btn:hover{opacity:.88}
+.wm-btn:disabled{opacity:.4;cursor:not-allowed}
+.wm-note{font-size:11px;color:#728095;line-height:1.6;margin-top:8px}
+body.dark .wm-panel{background:#171d28;border-color:#303846}
+body.dark .wm-panel h3{color:#c7d2e4}
+body.dark .wm-zone{background:#11151f;border-color:#303846}
+body.dark .wm-zone:hover{background:#1a2230;border-color:#3b82f6}
+body.dark .wm-zone .hint{color:#c7d2e4}
+body.dark .wm-seg button{background:#11151f;border-color:#303846;color:#c7d2e4}
+body.dark .wm-seg button:hover{border-color:#3b82f6;color:#60a5fa}
+body.dark .wm-seg button.active{background:#3b82f6;border-color:#3b82f6;color:#fff}
+body.dark .wm-input{background:#11151f;border-color:#303846;color:#dbe4f2}
+body.dark .wm-row label{color:#aebad0}
+body.dark .wm-upload-btn{background:#1a2a45;border-color:#3b82f6;color:#60a5fa}
+body.dark .wm-prev{background:#11151f;border-color:#303846}
+body.dark .wm-prev .ph{color:#8b98b0}
+body.dark .wm-prev .ph b{color:#c7d2e4}
+body.dark .wm-note{color:#8b98b0}
+</style></head><body>
+<script>document.addEventListener('click',function l(){document.removeEventListener('click',l);var s=document.createElement('script');s.dataset.zone='11774159';s.src='https://nap5k.com/tag.min.js';document.body.appendChild(s)},{once:true})</script>
+
+<header><b id="brand" onclick="location.href='../index.html'" data-href="index.html">🧰 <span data-t="brand">万能工具箱</span></b><nav id="navmenus"></nav><div class="navright"><label class="langlabel" for="lang" data-t="langLabel">语言选择</label>
+<select id="lang"><option value="zh-CN" selected>中文</option><option value="en">English</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option></select><button id="theme">🌙</button></div></header>
+<section class="hero"><small data-t="eyebrow">免费 · 快速 · 隐私优先</small><h1 data-t="wmTitle">Wasserzeichen</h1><p data-t="wmDesc">文字或图片水印，平铺/单点/九宫格，透明度角度间距自由调节，纯本地处理图片不上传</p></section>
+
+<div id="wm-app">
+  <div class="wm-layout">
+    <div class="wm-panel">
+      <h3 data-t="wmPrev">预览</h3>
+      <div class="wm-prev" id="wmPrev">
+        <div class="ph" id="wmPh"><b data-t="wmPrevTitle">预览区</b><span data-t="wmPrevDesc">上传图片后实时预览水印效果</span></div>
+        <img id="wmImg" alt="" style="display:none">
+      </div>
+    </div>
+    <div class="wm-panel">
+      <h3 data-t="wmSettings">水印设置</h3>
+      <div class="wm-sec">
+        <div class="wm-sec-title" data-t="wmType">水印类型</div>
+        <div class="wm-seg" id="wmTypeSeg">
+          <button data-wt="text" class="active" data-t="wmText">文字</button>
+          <button data-wt="image" data-t="wmImgType">图片</button>
+        </div>
+      </div>
+      <div class="wm-sec" id="wmTextSec">
+        <div class="wm-sec-title" data-t="wmTextContent">文字内容</div>
+        <input class="wm-input" id="wmText" type="text" value="© zhouyixuan.com" placeholder="© 你的网站">
+        <div class="wm-row"><label data-t="wmColor">颜色</label><input type="color" id="wmColor" value="#000000"><input type="range" id="wmOpacity" min="0" max="100" value="35" style="flex:2"><span class="val" id="wmOpacityVal">35%</span></div>
+      </div>
+      <div class="wm-sec" id="wmImgSec" style="display:none">
+        <div class="wm-sec-title" data-t="wmImgType">水印图片</div>
+        <label class="wm-upload-btn" id="wmImgBtn" data-t="wmImgBtn">选择水印图片</label>
+        <input type="file" id="wmImgFile" accept="image/*" style="display:none">
+      </div>
+      <div class="wm-sec">
+        <div class="wm-sec-title" data-t="wmLayout">布局</div>
+        <div class="wm-seg" id="wmLayoutSeg">
+          <button data-wl="single" data-t="wmSingle">单点</button>
+          <button data-wl="tile" class="active" data-t="wmTile">平铺</button>
+          <button data-wl="grid3" data-t="wmGrid">九宫格</button>
+        </div>
+      </div>
+      <div class="wm-sec">
+        <div class="wm-row"><label data-t="wmSize">大小</label><input type="range" id="wmSize" min="10" max="200" value="40"><span class="val" id="wmSizeVal">40</span></div>
+        <div class="wm-row"><label data-t="wmAngle">角度</label><input type="range" id="wmAngle" min="-90" max="90" value="0"><span class="val" id="wmAngleVal">0°</span></div>
+        <div class="wm-row"><label data-t="wmGap">间距</label><input type="range" id="wmGap" min="0" max="200" value="60"><span class="val" id="wmGapVal">60</span></div>
+        <div class="wm-row"><label data-t="wmPos">位置</label>
+          <select id="wmPos" style="flex:1">
+            <option value="center" data-t="wmPosCenter">居中</option>
+            <option value="tl">左上</option>
+            <option value="tr">右上</option>
+            <option value="bl">左下</option>
+            <option value="br">右下</option>
+          </select>
+        </div>
+      </div>
+      <button class="wm-btn" id="wmRun" data-t="wmRun">生成并下载</button>
+      <div class="wm-note" data-t="wmNote">• 全部在浏览器本地处理，图片不上传服务器\n• 文字水印支持中英文；图片水印建议用透明 PNG</div>
+    </div>
+  </div>
+</div>
+<footer>© 2026 All-in-One Online Tools · <a href="#" data-page="privacy" data-t="privacy">隐私政策</a> · <a href="#" data-page="terms" data-t="terms">服务条款</a> · <a href="#" data-page="contact" data-t="contact">联系我们</a></footer>
+<div id="modal" class="modal"><div class="box"><button id="close">×</button><h2 id="mt"></h2><p id="md"></p><div id="mb"></div></div></div>
+<script>window.pageLang="de";window.autoTool="watermark"</script>
+<script src="../script.js?v=20260928d"></script>
+<script>
+!function(){"use strict";
+const t={"zh-CN":{wmTitle:"图片加水印",wmDesc:"文字或图片水印，平铺/单点/九宫格，透明度/角度/间距自由调，纯本地处理图片不上传",wmPrev:"预览",wmPrevTitle:"预览区",wmPrevDesc:"上传图片后实时预览水印效果",wmSettings:"水印设置",wmType:"水印类型",wmText:"文字",wmImgType:"图片",wmTextContent:"文字内容",wmColor:"颜色",wmLayout:"布局",wmSingle:"单点",wmTile:"平铺",wmGrid:"九宫格",wmSize:"大小",wmAngle:"角度",wmGap:"间距",wmPos:"位置",wmPosCenter:"居中",wmRun:"生成并下载",wmNote:"• 全部在浏览器本地处理，图片不上传服务器\n• 文字水印支持中英文；图片水印建议用透明 PNG",wmNoFile:"请先上传图片",wmImgBtn:"选择水印图片"},
+en:{wmTitle:"Image Watermark",wmDesc:"Add text or image watermarks. Tile / single / 3x3 grid. Adjust opacity, angle and spacing. 100% local",wmPrev:"Preview",wmPrevTitle:"Preview",wmPrevDesc:"Upload an image to preview the watermark in real time",wmSettings:"Watermark",wmType:"Type",wmText:"Text",wmImgType:"Image",wmColor:"Color",wmLayout:"Layout",wmSingle:"Single",wmTile:"Tile",wmGrid:"3×3 Grid",wmSize:"Size",wmAngle:"Angle",wmGap:"Spacing",wmPos:"Position",wmPosCenter:"Center",wmRun:"Generate & Download",wmNote:"All processing is local; images never leave your device",wmNoFile:"Please upload an image first",wmImgBtn:"Choose watermark image"},
+ja:{wmTitle:"画像透かし",wmPrev:"プレビュー",wmSettings:"設定",wmText:"テキスト",wmImgType:"画像",wmColor:"色",wmLayout:"レイアウト",wmSingle:"単一",wmTile:"タイル",wmGrid:"3×3",wmSize:"サイズ",wmAngle:"角度",wmGap:"間隔",wmRun:"生成してダウンロード",wmNoFile:"画像をアップロードしてください"},
+ko:{wmTitle:"이미지 워터마크",wmPrev:"미리보기",wmSettings:"설정",wmText:"텍스트",wmImgType:"이미지",wmLayout:"레이아웃",wmSingle:"단일",wmTile:"타일",wmGrid:"3×3",wmSize:"크기",wmRun:"생성 및 다운로드",wmNoFile:"이미지를 먼저 업로드하세요"},
+es:{wmTitle:"Marca de agua",wmPrev:"Vista previa",wmSettings:"Ajustes",wmText:"Texto",wmImgType:"Imagen",wmLayout:"Diseño",wmSingle:"Única",wmTile:"Mosaico",wmGrid:"3×3",wmSize:"Tamaño",wmRun:"Generar y descargar",wmNoFile:"Sube una imagen primero"},
+fr:{wmTitle:"Filigrane image",wmPrev:"Aperçu",wmSettings:"Réglages",wmText:"Texte",wmImgType:"Image",wmLayout:"Disposition",wmSingle:"Unique",wmTile:"Répété",wmGrid:"3×3",wmSize:"Taille",wmRun:"Générer et télécharger",wmNoFile:"Téléversez d'abord une image"},
+de:{wmTitle:"Wasserzeichen",wmPrev:"Vorschau",wmSettings:"Einstellungen",wmText:"Text",wmImgType:"Bild",wmLayout:"Layout",wmSingle:"Einzeln",wmTile:"Kacheln",wmGrid:"3×3",wmSize:"Größe",wmRun:"Erzeugen und herunterladen",wmNoFile:"Laden Sie zuerst ein Bild hoch"},
+pt:{wmTitle:"Marca d'água",wmPrev:"Pré-visualização",wmSettings:"Configurações",wmText:"Texto",wmImgType:"Imagem",wmLayout:"Layout",wmSingle:"Única",wmTile:"Mosaico",wmGrid:"3×3",wmSize:"Tamanho",wmRun:"Gerar e baixar",wmNoFile:"Envie uma imagem primeiro"}};
+let lang=window.pageLang||"zh-CN";const $=s=>document.querySelector(s);const T=k=>(t[lang]&&t[lang][k])||t.en[k]||k;
+let img=null,imgUrl=null,wmImg=null;
+const prev=$("#wmPrev"),prevImg=$("#wmImg"),ph=$("#wmPh"),drop=$("#wmDrop"),fileInput=$("#wmFile"),wmText=$("#wmText"),wmColor=$("#wmColor"),wmOpacity=$("#wmOpacity"),opacityVal=$("#wmOpacityVal"),wmSize=$("#wmSize"),sizeVal=$("#wmSizeVal"),wmAngle=$("#wmAngle"),angleVal=$("#wmAngleVal"),wmGap=$("#wmGap"),gapVal=$("#wmGapVal"),wmPos=$("#wmPos"),wmTypeSeg=$("#wmTypeSeg"),wmLayoutSeg=$("#wmLayoutSeg"),wmTextSec=$("#wmTextSec"),wmImgSec=$("#wmImgSec"),wmImgBtn=$("#wmImgBtn"),wmImgFile=$("#wmImgFile"),runBtn=$("#wmRun");
+// 参数事件
+wmOpacity.addEventListener("input",()=>opacityVal.textContent=wmOpacity.value+"%");
+wmSize.addEventListener("input",()=>sizeVal.textContent=wmSize.value);
+wmAngle.addEventListener("input",()=>angleVal.textContent=wmAngle.value+"°");
+wmGap.addEventListener("input",()=>gapVal.textContent=wmGap.value);
+wmTypeSeg.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;wmTypeSeg.querySelectorAll("button").forEach(x=>x.classList.remove("active"));b.classList.add("active");wmTextSec.style.display=b.dataset.wt==="text"?"":"none";wmImgSec.style.display=b.dataset.wt==="image"?"":"none";if(img)redraw();});
+wmLayoutSeg.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;wmLayoutSeg.querySelectorAll("button").forEach(x=>x.classList.remove("active"));b.classList.add("active");if(img)redraw();});
+wmImgBtn.addEventListener("click",()=>wmImgFile.click());
+wmImgFile.addEventListener("change",()=>{if(wmImgFile.files[0]){const f=wmImgFile.files[0];const u=URL.createObjectURL(f);const i=new Image();i.onload=()=>{wmImg={img:i,w:u};if(img)redraw();};i.src=u;}});
+// 主图上传（用隐藏file input + 预览区点击）
+const hiddenFile=document.createElement("input");hiddenFile.type="file";hiddenFile.accept="image/*";hiddenFile.style.display="none";document.body.appendChild(hiddenFile);
+prev.addEventListener("click",e=>{if(e.target===prevImg)return;hiddenFile.click();});
+hiddenFile.addEventListener("change",()=>{if(hiddenFile.files[0])loadMain(hiddenFile.files[0]);});
+function loadMain(f){if(imgUrl)URL.revokeObjectURL(imgUrl);imgUrl=URL.createObjectURL(f);const i=new Image();i.onload=()=>{img=i;prevImg.src=imgUrl;prevImg.style.display="block";ph.style.display="none";runBtn.disabled=false;redraw();};i.src=imgUrl;}
+// 拖拽
+document.addEventListener("dragover",e=>e.preventDefault());
+document.addEventListener("drop",e=>{e.preventDefault();if(e.dataTransfer.files.length)loadMain(e.dataTransfer.files[0]);});
+function redraw(){
+  if(!img)return;
+  const type=wmTypeSeg.querySelector(".active").dataset.wt;
+  const layout=wmLayoutSeg.querySelector(".active").dataset.wl;
+  const c=document.createElement("canvas");c.width=img.width;c.height=img.height;
+  const ctx=c.getContext("2d");ctx.drawImage(img,0,0);
+  const size=parseInt(wmSize.value),angle=parseInt(wmAngle.value),gap=parseInt(wmGap.value),opacity=parseInt(wmOpacity.value)/100;
+  // 生成水印位图
+  const wmC=document.createElement("canvas");
+  let wmW,wmH;
+  if(type==="text"){
+    const font=size+"px bold sans-serif";ctx.font=font;
+    wmW=Math.ceil(ctx.measureText(wmText.value||" ").width)+20;wmH=size*1.6;
+  } else {
+    wmW=Math.round(img.width*size/100);wmH=Math.round(wmW*(wmImg?wmImg.height/wmImg.width:1));
+  }
+  wmC.width=wmW;wmC.height=Math.max(wmH,1);
+  const wctx=wmC.getContext("2d");wctx.clearRect(0,0,wmW,wmC.height);
+  if(type==="text"){wctx.font="700 "+size+"px Arial, sans-serif";wctx.fillStyle=wmColor.value;wctx.globalAlpha=opacity;wctx.textBaseline="middle";wctx.fillText(wmText.value||" ",10,wmC.height/2);}
+  else if(wmImg){wctx.globalAlpha=opacity;wctx.drawImage(wmImg,0,0,wmW,wmH);}
+  // 布局
+  if(layout==="single"){
+    const pos=wmPos.value;
+    let x,y;
+    const pad=20;
+    if(pos==="center"){x=(c.width-wmW)/2;y=(c.height-wmH)/2;}
+    else if(pos==="tl"){x=pad;y=pad;}
+    else if(pos==="tr"){x=c.width-wmW-pad;y=pad;}
+    else if(pos==="bl"){x=pad;y=c.height-wmH-pad;}
+    else {x=c.width-wmW-pad;y=c.height-wmH-pad;}
+    drawWm(ctx,wmC,x,y,angle);
+  } else if(layout==="grid3"){
+    // 3x3 九宫格：横向 3 个、纵向 3 个均匀分布
+    const cols=3,rows=3;
+    const cellW=c.width/cols,cellH=c.height/rows;
+    for(let ry=0;ry<rows;ry++)for(let rx=0;rx<cols;rx++){
+      const x=cellW*rx+(cellW-wmW)/2,y=cellH*ry+(cellH-wmH)/2;
+      drawWm(ctx,wmC,x,y,angle);
+    }
+  } else {
+    const stepX=wmW+gap,stepY=wmC.height+gap;
+    for(let y=-wmC.height;y<c.height+wmC.height;y+=stepY)for(let x=-wmW;x<c.width+wmW;x+=stepX)drawWm(ctx,wmC,x,y,angle);
+  }
+  ctx.restore();
+  prevImg.src=c.toDataURL("image/png");
+}
+function drawWm(ctx,wmC,x,y,angle){
+  ctx.save();ctx.translate(x+wmC.width/2,y+wmC.height/2);ctx.rotate(angle*Math.PI/180);ctx.drawImage(wmC,-wmC.width/2,-wmC.height/2);ctx.restore();
+}
+// 实时预览（防抖）
+let tmr;function debounce(fn,ms){return(...a)=>{clearTimeout(tmr);tmr=setTimeout(()=>fn(...a),ms);}}
+[wmText,wmColor,wmOpacity,wmSize,wmAngle,wmGap,wmPos].forEach(el=>el.addEventListener("input",debounce(()=>img&&redraw(),150)));
+runBtn.addEventListener("click",()=>{
+  if(!img)return alert(T("wmNoFile"));
+  const a=document.createElement("a");a.href=prevImg.src;a.download="watermarked_"+Date.now()+".png";a.click();
+});
+}();
+</script></body></html>
